@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Violation {
@@ -21,6 +20,10 @@ namespace Mooble.StaticAnalysis.Violation {
         this.component.gameObject.name,
         this.component.GetType(),
         this.name);
+    }
+
+    public UnityEngine.Object GetObject() {
+      return this.component;
     }
   }
 }

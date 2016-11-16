@@ -34,7 +34,7 @@ namespace Mooble.StaticAnalysis {
       }
 
       for (int i = 0; i < violations.Count; i++) {
-        Log.Warning(violations[i].Format());
+        Log.Warning(violations[i].Format(), violations[i].GetObject());
       }
     }
 
@@ -59,7 +59,7 @@ namespace Mooble.StaticAnalysis {
       }
 
       for (int i = 0; i < violations.Count; i++) {
-        Log.Warning(violations[i].Format());
+        Log.Warning(violations[i].Format(), violations[i].GetObject());
       }
     }
 

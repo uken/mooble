@@ -19,7 +19,7 @@ namespace Mooble.StaticAnalysis {
         this.component.GetType());
     }
 
-    public Object GetObject() {
+    public UnityEngine.Object GetObject() {
       return this.component;
     }
   }

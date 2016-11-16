@@ -1,13 +1,15 @@
-﻿namespace Mooble.StaticAnalysis.Violation {
+﻿using UnityEngine;
+
+namespace Mooble.StaticAnalysis.Violation {
   public class NoDuplicateComponentsViolation : IViolation {
     private Rules.NoDuplicateComponents rule;
-    private string gameObjectName;
+    private GameObject gameObject;
     private string componentName;
     private int count;
 
-    public NoDuplicateComponentsViolation(Rules.NoDuplicateComponents r, string o, string c, int n) {
+    public NoDuplicateComponentsViolation(Rules.NoDuplicateComponents r, GameObject o, string c, int n) {
       this.rule = r;
-      this.gameObjectName = o;
+      this.gameObject = o;
       this.componentName = c;
       this.count = n;
     }
@@ -19,7 +21,11 @@
         this.rule.Name,
         this.count,
         this.componentName,
-        this.gameObjectName);
+        this.gameObject.name);
+    }
+
+    public UnityEngine.Object GetObject() {
+      return this.gameObject;
     }
   }
 }
