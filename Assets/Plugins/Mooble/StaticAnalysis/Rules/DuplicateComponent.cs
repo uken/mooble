@@ -32,7 +32,7 @@ namespace Mooble.StaticAnalysis.Rules {
 
       foreach (var kvp in s) {
         if (kvp.Value > 1) {
-          violations.Add(new DuplicateComponentViolation(this, thing.name, kvp.Key));
+          violations.Add(new DuplicateComponentViolation(this, thing.name, kvp.Key, kvp.Value));
         }
       }
 
