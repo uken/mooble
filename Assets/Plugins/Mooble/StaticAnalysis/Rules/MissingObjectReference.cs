@@ -12,6 +12,10 @@ namespace Mooble.StaticAnalysis.Rules {
     public MissingObjectReference() : base(NAME, ViolationLevel.Warning) {
     }
 
+    public override List<IViolation> Handle(object thing) {
+      return this.Handle(thing as Component);
+    }
+
     public override List<IViolation> Handle(Component thing) {
       var violations = new List<IViolation>();
 

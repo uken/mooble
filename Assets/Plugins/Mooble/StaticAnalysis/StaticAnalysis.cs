@@ -5,15 +5,19 @@ using UnityEngine;
 namespace Mooble.StaticAnalysis {
   public class StaticAnalysis {
     private List<Rule<GameObject>> gameObjectRules;
-    private List<Rule<Component>> componentRules;
+    private Dictionary<Type, List<Rule>> componentRules;
 
     public StaticAnalysis() {
       this.gameObjectRules = new List<Rule<GameObject>>();
-      this.componentRules = new List<Rule<Component>>();
+      this.componentRules = new Dictionary<Type, List<Rule>>();
     }
 
-    public void RegisterRule(Rule<Component> rule) {
-      this.componentRules.Add(rule);
+    public void RegisterRule<T>(Rule<T> rule) {
+      if (!this.componentRules.ContainsKey(typeof(T))) {
+        this.componentRules[typeof(T)] = new List<Rule>();
+      }
+
+      this.componentRules[typeof(T)].Add(rule);
     }
 
     public void RegisterRule(Rule<GameObject> rule) {
@@ -21,7 +25,6 @@ namespace Mooble.StaticAnalysis {
     }
 
     public List<IViolation> Analyze(GameObject root) {
-      var components = root.GetComponents<Component>();
       var violations = new List<IViolation>();
 
       for (var j = 0; j < this.gameObjectRules.Count; j++) {
@@ -29,12 +32,17 @@ namespace Mooble.StaticAnalysis {
         violations.AddRange(rule.Handle(root));
       }
 
-      for (var i = 0; i < components.Length; i++) {
-        var component = components[i];
+      foreach (var componentRuleSet in this.componentRules) {
+        var rules = componentRuleSet.Value;
 
-        for (var j = 0; j < this.componentRules.Count; j++) {
-          var rule = this.componentRules[j];
-          violations.AddRange(rule.Handle(component));
+        for (var j = 0; j < rules.Count; j++) {
+          var rule = rules[j];
+          var components = root.GetComponents(componentRuleSet.Key);
+
+          for (var i = 0; i < components.Length; i++) {
+            var component = components[i];
+            violations.AddRange(rule.Handle(component));
+          }
         }
       }
 
