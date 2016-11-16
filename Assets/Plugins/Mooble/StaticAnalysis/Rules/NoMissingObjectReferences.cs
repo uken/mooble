@@ -41,7 +41,7 @@ namespace Mooble.StaticAnalysis.Rules {
         }
 
         if (field.FieldType.IsClass && val == null) {
-          violations.Add(new NoMissingObjectReferencesViolation(this, componentType, field.Name));
+          violations.Add(new NoMissingObjectReferencesViolation(this, thing, field.Name));
         }
       }
 
@@ -53,7 +53,7 @@ namespace Mooble.StaticAnalysis.Rules {
         }
 
         if (property.PropertyType.IsClass && val == null) {
-          violations.Add(new NoMissingObjectReferencesViolation(this, componentType, property.Name));
+          violations.Add(new NoMissingObjectReferencesViolation(this, thing, property.Name));
         }
       }
 
