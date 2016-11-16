@@ -11,7 +11,16 @@ namespace Mooble.StaticAnalysis {
     }
 
     public string Format() {
-      return this.rule.Level + " " + this.rule.Name + ": " + this.component.name + "." + this.component.GetType() + " is inactive.";
+      return string.Format(
+        "{0} {1}: {2}.{3} is inactive.",
+        this.rule.Level,
+        this.rule.Name,
+        this.component.name,
+        this.component.GetType());
+    }
+
+    public Object GetObject() {
+      return this.component;
     }
   }
 }
