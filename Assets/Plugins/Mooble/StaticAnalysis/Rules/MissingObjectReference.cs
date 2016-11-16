@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-using UnityEngine;
 using Mooble.StaticAnalysis.Violation;
+using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class MissingObjectReference : Rule<Component> {
