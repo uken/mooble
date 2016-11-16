@@ -15,14 +15,24 @@ namespace Mooble.StaticAnalysis.Rules {
     public override List<IViolation> Handle(Component thing) {
       var violations = new List<IViolation>();
 
+      if (thing == null) {
+        return violations;
+      }
+
       Type componentType = thing.GetType();
-      FieldInfo[] fields = componentType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-      PropertyInfo[] properties = componentType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+      FieldInfo[] fields = componentType.GetFields(
+          BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+      PropertyInfo[] properties = componentType.GetProperties(
+          BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
       foreach (var field in fields) {
         var val = field.GetValue(thing);
 
-        if (field.IsNotSerialized) {
+        if (field.IsPrivate && !field.IsDefined(typeof(SerializeField), false)) {
+          continue;
+        }
+
+        if (field.IsPublic && field.IsDefined(typeof(HideInInspector), false)) {
           continue;
         }
 
@@ -33,6 +43,10 @@ namespace Mooble.StaticAnalysis.Rules {
 
       foreach (var property in properties) {
         var val = property.GetValue(thing, null);
+
+        if (property.IsDefined(typeof(HideInInspector), false) || property.GetSetMethod() == null) {
+          continue;
+        }
 
         if (property.PropertyType.IsClass && val == null) {
           violations.Add(new MissingObjectReferenceViolation(this, componentType, property.Name));
