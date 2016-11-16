@@ -6,17 +6,17 @@ using Mooble.StaticAnalysis.Violation;
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
-  public class NoMissingObjectReferences : Rule<Component> {
+  public class NoMissingObjectReferences : Rule<MonoBehaviour> {
     public const string NAME = "MissingObjectReference";
 
     public NoMissingObjectReferences() : base(NAME, ViolationLevel.Warning) {
     }
 
     public override List<IViolation> Handle(object thing) {
-      return this.Handle(thing as Component);
+      return this.Handle(thing as MonoBehaviour);
     }
 
-    public override List<IViolation> Handle(Component thing) {
+    public override List<IViolation> Handle(MonoBehaviour thing) {
       var violations = new List<IViolation>();
 
       if (thing == null) {
@@ -46,7 +46,13 @@ namespace Mooble.StaticAnalysis.Rules {
       }
 
       foreach (var property in properties) {
-        var val = property.GetValue(thing, null);
+        object val;
+
+        try {
+          val = property.GetValue(thing, null);
+        } catch {
+          continue;
+        }
 
         if (property.IsDefined(typeof(HideInInspector), false) || property.GetSetMethod() == null) {
           continue;
