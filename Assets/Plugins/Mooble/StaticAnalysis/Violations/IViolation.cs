@@ -1,4 +1,4 @@
-namespace Mooble.StaticAnalysis.Violation {
+namespace Mooble.StaticAnalysis {
   public interface IViolation {
     string Format();
   }

@@ -1,5 +1,4 @@
 using System;
-using Mooble.StaticAnalysis.Violation;
 
 namespace Mooble.StaticAnalysis.Violation {
   public class MissingObjectReferenceViolation : IViolation {
@@ -14,7 +13,7 @@ namespace Mooble.StaticAnalysis.Violation {
     }
 
     public string Format() {
-      return this.rule.Level + " " + this.rule.Name + ": " + this.type + "." + this.name + " is undefined";
+      return this.rule.Level + " " + this.rule.Name + ": " + this.type + "." + this.name + " is undefined.";
     }
   }
 }

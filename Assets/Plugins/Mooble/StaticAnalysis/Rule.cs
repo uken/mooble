@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Mooble.StaticAnalysis.Violation;
 
 namespace Mooble.StaticAnalysis {
   public abstract class Rule<T> {
