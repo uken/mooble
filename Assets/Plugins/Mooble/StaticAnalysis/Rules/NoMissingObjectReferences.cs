@@ -24,6 +24,11 @@ namespace Mooble.StaticAnalysis.Rules {
       }
 
       Type componentType = thing.GetType();
+
+      if (componentType.Namespace != null && componentType.Namespace.Contains("UnityEngine")) {
+        return violations;
+      }
+
       FieldInfo[] fields = componentType.GetFields(
           BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
       PropertyInfo[] properties = componentType.GetProperties(
