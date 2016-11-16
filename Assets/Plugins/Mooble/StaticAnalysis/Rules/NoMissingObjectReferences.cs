@@ -46,17 +46,14 @@ namespace Mooble.StaticAnalysis.Rules {
       }
 
       foreach (var property in properties) {
-        object val;
-
-        try {
-          val = property.GetValue(thing, null);
-        } catch {
+        if (property.IsDefined(typeof(HideInInspector), false) ||
+            property.IsDefined(typeof(ObsoleteAttribute), false) ||
+            property.GetSetMethod() == null ||
+            property.GetGetMethod() == null) {
           continue;
         }
 
-        if (property.IsDefined(typeof(HideInInspector), false) || property.GetSetMethod() == null) {
-          continue;
-        }
+        var val = property.GetValue(thing, null);
 
         if (property.PropertyType.IsClass && val == null) {
           violations.Add(new NoMissingObjectReferencesViolation(this, thing, property.Name));
