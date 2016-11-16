@@ -16,6 +16,7 @@
 *.unityproj
 *.booproj
 *.orig.meta
+*.sublime-project
 
 # Unity3D generated meta files
 *.pidb.meta
