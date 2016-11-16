@@ -1,11 +1,11 @@
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis {
-  public class InactiveComponentViolation : IViolation {
-    private Rules.InactiveComponent rule;
+  public class NoInactiveBehavioursViolation : IViolation {
+    private Rules.NoInactiveBehaviours rule;
     private Component component;
 
-    public InactiveComponentViolation(Rules.InactiveComponent r, Component c) {
+    public NoInactiveBehavioursViolation(Rules.NoInactiveBehaviours r, Component c) {
       this.rule = r;
       this.component = c;
     }

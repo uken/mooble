@@ -4,10 +4,10 @@ using Mooble.StaticAnalysis.Violation;
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
-  public class DuplicateComponent : Rule<GameObject> {
+  public class NoDuplicateComponents : Rule<GameObject> {
     public const string NAME = "DuplicateComponent";
 
-    public DuplicateComponent() : base(NAME, ViolationLevel.Warning) {
+    public NoDuplicateComponents() : base(NAME, ViolationLevel.Warning) {
     }
 
     public override List<IViolation> Handle(object thing) {
@@ -32,7 +32,7 @@ namespace Mooble.StaticAnalysis.Rules {
 
       foreach (var kvp in s) {
         if (kvp.Value > 1) {
-          violations.Add(new DuplicateComponentViolation(this, thing.name, kvp.Key, kvp.Value));
+          violations.Add(new NoDuplicateComponentsViolation(this, thing.name, kvp.Key, kvp.Value));
         }
       }
 

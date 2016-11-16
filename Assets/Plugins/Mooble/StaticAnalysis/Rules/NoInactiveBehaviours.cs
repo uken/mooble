@@ -3,10 +3,10 @@
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
-  public class InactiveComponent : Rule<Behaviour> {
-    public const string NAME = "InactiveComponent";
+  public class NoInactiveBehaviours : Rule<Behaviour> {
+    public const string NAME = "NoInactiveBehaviours";
 
-    public InactiveComponent() : base(NAME, ViolationLevel.Warning) {
+    public NoInactiveBehaviours() : base(NAME, ViolationLevel.Warning) {
     }
 
     public override List<IViolation> Handle(object thing) {
@@ -20,7 +20,7 @@ namespace Mooble.StaticAnalysis.Rules {
         return violations;
       }
 
-      violations.Add(new InactiveComponentViolation(this, thing));
+      violations.Add(new NoInactiveBehavioursViolation(this, thing));
 
       return violations;
     }

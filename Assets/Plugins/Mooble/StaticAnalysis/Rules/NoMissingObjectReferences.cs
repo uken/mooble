@@ -6,10 +6,10 @@ using Mooble.StaticAnalysis.Violation;
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
-  public class MissingObjectReference : Rule<Component> {
+  public class NoMissingObjectReferences : Rule<Component> {
     public const string NAME = "MissingObjectReference";
 
-    public MissingObjectReference() : base(NAME, ViolationLevel.Warning) {
+    public NoMissingObjectReferences() : base(NAME, ViolationLevel.Warning) {
     }
 
     public override List<IViolation> Handle(object thing) {
@@ -41,7 +41,7 @@ namespace Mooble.StaticAnalysis.Rules {
         }
 
         if (field.FieldType.IsClass && val == null) {
-          violations.Add(new MissingObjectReferenceViolation(this, componentType, field.Name));
+          violations.Add(new NoMissingObjectReferencesViolation(this, componentType, field.Name));
         }
       }
 
@@ -53,7 +53,7 @@ namespace Mooble.StaticAnalysis.Rules {
         }
 
         if (property.PropertyType.IsClass && val == null) {
-          violations.Add(new MissingObjectReferenceViolation(this, componentType, property.Name));
+          violations.Add(new NoMissingObjectReferencesViolation(this, componentType, property.Name));
         }
       }
 

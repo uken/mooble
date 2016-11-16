@@ -1,12 +1,12 @@
 using System;
 
 namespace Mooble.StaticAnalysis.Violation {
-  public class MissingObjectReferenceViolation : IViolation {
-    private Rules.MissingObjectReference rule;
+  public class NoMissingObjectReferencesViolation : IViolation {
+    private Rules.NoMissingObjectReferences rule;
     private Type type;
     private string name;
 
-    public MissingObjectReferenceViolation(Rules.MissingObjectReference r, Type t, string n) {
+    public NoMissingObjectReferencesViolation(Rules.NoMissingObjectReferences r, Type t, string n) {
       this.rule = r;
       this.type = t;
       this.name = n;
