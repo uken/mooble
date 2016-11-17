@@ -15,7 +15,7 @@
     },
     {
       "Name": "NoMissingObjectReferences",
-      "ViolationLevel": "Error",
+      "ViolationLevel": "Warning",
       "Exclusions": []
     },
     {
