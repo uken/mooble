@@ -13,12 +13,24 @@ namespace Mooble.StaticAnalysis {
       this.componentRules = new Dictionary<Type, List<Rule>>();
     }
 
-    public void RegisterRule<T>(Rule<T> rule) {
-      if (!this.componentRules.ContainsKey(typeof(T))) {
-        this.componentRules[typeof(T)] = new List<Rule>();
+    public void RegisterComponentRule(Type type, Rule rule) {
+      if (!this.componentRules.ContainsKey(type)) {
+        this.componentRules[type] = new List<Rule>();
       }
 
-      this.componentRules[typeof(T)].Add(rule);
+      this.componentRules[type].Add(rule);
+    }
+
+    public void RegisterRule<T>(Rule<T> rule) {
+      this.RegisterComponentRule(typeof(T), rule);
+    }
+
+    public void RegisterRule(Type type, Rule rule) {
+      if (type == typeof(GameObject)) {
+        this.RegisterRule((Rule<GameObject>)rule);
+      } else {
+        this.RegisterComponentRule(type, rule);
+      }
     }
 
     public void RegisterRule(Rule<GameObject> rule) {
