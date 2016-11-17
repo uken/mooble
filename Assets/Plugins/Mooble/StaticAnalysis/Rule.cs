@@ -3,6 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Mooble.StaticAnalysis {
   public abstract class Rule {
+    public string Name {
+      get {
+        return this.GetType().Name;
+      }
+    }
+
     public abstract List<IViolation> Handle(object thing);
   }
 
@@ -15,12 +21,6 @@ namespace Mooble.StaticAnalysis {
 
     protected Rule(ViolationLevel level) {
       this.Level = level;
-    }
-
-    public string Name {
-      get {
-        return this.GetType().Name;
-      }
     }
 
     public abstract List<IViolation> Handle(T thing);

@@ -13,14 +13,18 @@ namespace Mooble.StaticAnalysis {
       this.componentRules = new Dictionary<Type, List<Rule>>();
     }
 
-    public List<Rule> EnabledRules {
+    public List<string> EnabledRuleNames {
       get {
-        var allRules = new List<Rule>();
+        var allRules = new List<string>();
 
-        allRules.AddRange(this.gameObjectRules);
+        for (var i = 0; i < this.gameObjectRules.Count; i++) {
+          allRules.Add(this.gameObjectRules[i].Name);
+        }
 
         foreach (var kvp in this.componentRules) {
-          allRules.AddRange(kvp.Value);
+          for (var i = 0; i < kvp.Value.Count; i++) {
+            allRules.Add(kvp.Value[i].Name);
+          }
         }
 
         return allRules;
