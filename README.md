@@ -10,12 +10,12 @@ and allowing you to customize the static analysis by writing your own rules.
 
 ### Built-in Rules
 
-#### NoDuplicateComponents
+#### `NoDuplicateComponents`
 
 This rule makes sure that GameObjects do not have two of the same type of
 Component, e.g.  no GameObject has two Text components, etc.
 
-#### NoInactiveBehaviours
+#### `NoInactiveBehaviours`
 
 This rule ensures that no
 [Behaviour](https://docs.unity3d.com/ScriptReference/Behaviour.html) is set to
@@ -23,13 +23,13 @@ inactive. You can exclude certain types from this rule (i.e., allowing them to
 be inactive in the scene or prefab) by specifying an `Exclusions` array in the
 configuration. See [config](# Configuration Options) for more details.
 
-#### NoMissingComponents
+#### `NoMissingComponents`
 
 This rule ensures that all script components are not referencing missing
 scripts.  If your object has a component with a missing script reference,
 something has likely gone wrong!
 
-#### NoMissingObjectReferences
+#### `NoMissingObjectReferences`
 
 This rule outputs a warning if you have a
 [MonoBehaviour](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html)
@@ -92,7 +92,7 @@ Other common assemblies include:
 * `Assembly-CSharp` for code in your project
 * `Assembly-CSharp-firstpass` for code in your plugins directory
 
-:info: Not all rules accept `Exclusions` lists; take a look at the code for the
+Not all rules accept `Exclusions` lists; take a look at the code for the
 specific rule to check whether it accepts exclusions.
 
 ### Build Integration
