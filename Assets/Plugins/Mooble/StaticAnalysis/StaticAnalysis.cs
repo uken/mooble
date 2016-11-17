@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Mooble.StaticAnalysis {
   public class StaticAnalysis {
@@ -13,56 +11,6 @@ namespace Mooble.StaticAnalysis {
     public StaticAnalysis() {
       this.gameObjectRules = new List<Rule<GameObject>>();
       this.componentRules = new Dictionary<Type, List<Rule>>();
-    }
-
-    [MenuItem("Mooble/StaticAnalysis/AnalyzePrefabs")]
-    public static void PrintPrefabAnalysis() {
-      var sa = new StaticAnalysis();
-      sa.RegisterRule(new Rules.NoInactiveBehaviours());
-      sa.RegisterRule(new Rules.NoDuplicateComponents());
-      sa.RegisterRule(new Rules.NoMissingObjectReferences());
-
-      // TODO: Configure prefab location
-      var prefabDirectories = new[] { "Assets/Prefabs" };
-      var assets = AssetDatabase.FindAssets("t:prefab", prefabDirectories);
-      var violations = new List<IViolation>();
-
-      for (var i = 0; i < assets.Length; i++) {
-        var asset = assets[i];
-        var path = AssetDatabase.GUIDToAssetPath(asset);
-        var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
-
-        violations.AddRange(sa.Analyze(obj));
-      }
-
-      for (int i = 0; i < violations.Count; i++) {
-        Log.Warning(violations[i].Format(), violations[i].GetObject());
-      }
-    }
-
-    [MenuItem("Mooble/StaticAnalysis/AnalyzeScene")]
-    public static void PrintSceneAnalysis() {
-      var sa = new StaticAnalysis();
-      sa.RegisterRule(new Rules.NoInactiveBehaviours());
-      sa.RegisterRule(new Rules.NoDuplicateComponents());
-      sa.RegisterRule(new Rules.NoMissingObjectReferences());
-
-      var scenes = SceneManager.GetAllScenes();
-      var violations = new List<IViolation>();
-
-      for (var i = 0; i < scenes.Length; i++) {
-        var scene = scenes[i];
-
-        GameObject[] rootGameObjects = scene.GetRootGameObjects();
-        for (var j = 0; j < rootGameObjects.Length; j++) {
-          var obj = rootGameObjects[j];
-          violations.AddRange(sa.Analyze(obj));
-        }
-      }
-
-      for (int i = 0; i < violations.Count; i++) {
-        Log.Warning(violations[i].Format(), violations[i].GetObject());
-      }
     }
 
     public void RegisterRule<T>(Rule<T> rule) {
