@@ -21,6 +21,10 @@ namespace Mooble.StaticAnalysis.Rules {
       var s = new Dictionary<string, int>();
 
       foreach (var component in allComponents) {
+        if (component == null) {
+          continue;
+        }
+
         var componentType = component.GetType().ToString();
 
         if (s.ContainsKey(componentType)) {
