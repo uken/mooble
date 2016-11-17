@@ -6,7 +6,7 @@ using UnityEngine;
 
 using Mooble.StaticAnalysis;
 
-namespace Mooble.Editor {
+namespace Mooble.EditorExtensions {
   [System.Serializable]
   public class ConsoleEditorLogger : ScriptableObject {
     public int NoErrors { get; set; }
@@ -26,7 +26,17 @@ namespace Mooble.Editor {
   }
 
   public class ConsoleEditorWindow : EditorWindow {
-    public static ConsoleEditorWindow Instance = null;
+    public static ConsoleEditorWindow Instance {
+      get {
+        if (instance == null) {
+          Init();
+        }
+
+        return instance;
+      }
+    }
+
+    private static ConsoleEditorWindow instance;
 
     private Vector2 drawPosition;
     private Texture2D errorIcon;
@@ -55,12 +65,13 @@ namespace Mooble.Editor {
     }
 
     private static void Init() {
-      Instance = EditorWindow.GetWindow(typeof(ConsoleEditorWindow), false, "Mooble") as ConsoleEditorWindow;
-      Instance.Show();
+      instance = EditorWindow.GetWindow(typeof(ConsoleEditorWindow), false, "Mooble") as ConsoleEditorWindow;
+      instance.Show();
     }
 
-    public void OnLogChange() {
-      Debug.Log("SDfsdfsdkfnlskdf");
+    public void SetViolations(Dictionary<Rule, List<IViolation>> violations) {
+      this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
+      this.rulesAndTheirViolations = StaticAnalysis.StaticAnalysis.MergeRuleViolationDictionary(this.rulesAndTheirViolations, violations);
     }
 
     private void OnEnable() {
@@ -104,6 +115,10 @@ namespace Mooble.Editor {
     }
 
     private void DrawToolbar() {
+      if (this.rulesAndTheirViolations == null) {
+        this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
+      }
+
       var toolbarStyle = EditorStyles.toolbarButton;
 
       this.drawPosition.x = position.width * 0.01f;
@@ -118,12 +133,21 @@ namespace Mooble.Editor {
       this.DrawLabel("Rule: ", EditorStyles.toolbarButton, out sizeOfElement);
       this.drawPosition.x += sizeOfElement.x;
 
+      var rules = this.rulesAndTheirViolations.Keys;
+      var ruleNames = new List<string>();
+      var longestRuleName = string.Empty;
+      foreach (var rule in rules) {
+        ruleNames.Add(rule.Name);
+        Debug.Log(rule.Name);
+        longestRuleName = longestRuleName.Length > rule.Name.Length ? longestRuleName : rule.Name;
+      }
+
       EditorGUI.Popup(
         new Rect(
           this.drawPosition,
-          toolbarStyle.CalcSize(new GUIContent("reallylongstringlikereallylong"))),
+          toolbarStyle.CalcSize(new GUIContent(longestRuleName))),
         0,
-        new[] { "a", "b", "c" },
+        ruleNames.ToArray(),
         EditorStyles.toolbarPopup);
 
       var errorToggleContent = new GUIContent(this.logger.NoErrors.ToString(), this.errorIcon);
@@ -151,6 +175,10 @@ namespace Mooble.Editor {
     }
 
     private void DrawScrollRect(float height) {
+      if (this.rulesAndTheirViolations == null) {
+        return;
+      }
+
       var oldColor = GUI.backgroundColor;
       var logLineStyle = this.logEntryEven;
       var logLineSize = logLineStyle.CalcSize(new GUIContent("A"));
@@ -198,10 +226,10 @@ namespace Mooble.Editor {
             this.selectedLog = i;
           }
 
-          // var go = this.rulesAndTheirViolations[i].Source as GameObject;
-          // if (go != null) {
-          //   Selection.activeGameObject = go;
-          // }
+          var go = toDisplay[i].GetObject();
+          if (go != null) {
+            Selection.activeObject = go;
+          }
         }
       }
 

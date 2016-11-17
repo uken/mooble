@@ -13,6 +13,18 @@ namespace Mooble.StaticAnalysis {
       this.componentRules = new Dictionary<Type, List<Rule>>();
     }
 
+    public static Dictionary<Rule, List<IViolation>> MergeRuleViolationDictionary(Dictionary<Rule, List<IViolation>> violations1, Dictionary<Rule, List<IViolation>> violations2) {
+      foreach (var more in violations2) {
+        if (!violations1.ContainsKey(more.Key)) {
+          violations1[more.Key] = more.Value;
+        } else {
+          violations1[more.Key].AddRange(more.Value);
+        }
+      }
+
+      return violations1;
+    }
+
     public List<string> EnabledRuleNames {
       get {
         var allRules = new List<string>();
@@ -55,12 +67,12 @@ namespace Mooble.StaticAnalysis {
       this.gameObjectRules.Add(rule);
     }
 
-    public List<IViolation> Analyze(GameObject root) {
-      var violations = new List<IViolation>();
+    public Dictionary<Rule, List<IViolation>> Analyze(GameObject root) {
+      var violations = new Dictionary<Rule, List<IViolation>>();
 
       for (var j = 0; j < this.gameObjectRules.Count; j++) {
         var rule = this.gameObjectRules[j];
-        violations.AddRange(rule.Handle(root));
+        violations[rule] = rule.Handle(root);
       }
 
       foreach (var componentRuleSet in this.componentRules) {
@@ -69,16 +81,19 @@ namespace Mooble.StaticAnalysis {
         for (var j = 0; j < rules.Count; j++) {
           var rule = rules[j];
           var components = root.GetComponents(componentRuleSet.Key);
+          violations[rule] = new List<IViolation>();
 
           for (var i = 0; i < components.Length; i++) {
             var component = components[i];
-            violations.AddRange(rule.Handle(component));
+            violations[rule].AddRange(rule.Handle(component));
           }
         }
       }
 
       foreach (Transform child in root.transform) {
-        violations.AddRange(this.Analyze(child.gameObject));
+        var moreViolations = this.Analyze(child.gameObject);
+
+        violations = MergeRuleViolationDictionary(violations, moreViolations);
       }
 
       return violations;
