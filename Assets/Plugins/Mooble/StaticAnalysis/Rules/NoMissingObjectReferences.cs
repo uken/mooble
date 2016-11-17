@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoMissingObjectReferences : Rule<MonoBehaviour> {
-    public const string NAME = "MissingObjectReference";
+    public const string NAME = "NoMissingObjectReferences";
 
     public NoMissingObjectReferences() : base(NAME, ViolationLevel.Warning) {
     }
@@ -31,8 +31,6 @@ namespace Mooble.StaticAnalysis.Rules {
 
       FieldInfo[] fields = componentType.GetFields(
           BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
-      PropertyInfo[] properties = componentType.GetProperties(
-          BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly);
 
       foreach (var field in fields) {
         var val = field.GetValue(thing);
@@ -47,21 +45,6 @@ namespace Mooble.StaticAnalysis.Rules {
 
         if (field.FieldType.IsClass && val == null) {
           violations.Add(new NoMissingObjectReferencesViolation(this, thing, field.Name));
-        }
-      }
-
-      foreach (var property in properties) {
-        if (property.IsDefined(typeof(HideInInspector), false) ||
-            property.IsDefined(typeof(ObsoleteAttribute), false) ||
-            property.GetSetMethod() == null ||
-            property.GetGetMethod() == null) {
-          continue;
-        }
-
-        var val = property.GetValue(thing, null);
-
-        if (property.PropertyType.IsClass && val == null) {
-          violations.Add(new NoMissingObjectReferencesViolation(this, thing, property.Name));
         }
       }
 

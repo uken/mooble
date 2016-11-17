@@ -22,7 +22,9 @@ namespace Mooble.StaticAnalysis {
       sa.RegisterRule(new Rules.NoDuplicateComponents());
       sa.RegisterRule(new Rules.NoMissingObjectReferences());
 
-      var assets = AssetDatabase.FindAssets("t:prefab");
+      // TODO: Configure prefab location
+      var prefabDirectories = new[] { "Assets/Prefabs" };
+      var assets = AssetDatabase.FindAssets("t:prefab", prefabDirectories);
       var violations = new List<IViolation>();
 
       for (var i = 0; i < assets.Length; i++) {
