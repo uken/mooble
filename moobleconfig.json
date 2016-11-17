@@ -6,12 +6,22 @@
     {
       "Name": "NoDuplicateComponents",
       "ViolationLevel": "Warning",
-      "Exclusions": [ "UnityEngine.UI.Outline" ]
+      "Exclusions": []
+    },
+    {
+      "Name": "NoMissingComponents",
+      "ViolationLevel": "Error",
+      "Exclusions": []
     },
     {
       "Name": "NoMissingObjectReferences",
       "ViolationLevel": "Error",
-      "Exclusions": [ "UnityEngine.UI.GraphicRaycaster" ]
+      "Exclusions": []
+    },
+    {
+      "Name": "NoInactiveBehaviours",
+      "ViolationLevel": "Warning",
+      "Exclusions": []
     }
   ]
 }
