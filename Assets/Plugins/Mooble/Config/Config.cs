@@ -15,6 +15,7 @@ namespace Mooble.Config {
 
     [Serializable]
     public class StaticAnalysisRuleConfig {
+      public string Assembly;
       public string Name;
       public string ViolationLevel;
       public string[] Exclusions;

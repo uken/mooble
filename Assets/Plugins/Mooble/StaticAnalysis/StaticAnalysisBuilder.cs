@@ -19,13 +19,19 @@ namespace Mooble.StaticAnalysis {
         var ruleConfig = this.config.Rules[i];
         var klassName = ruleConfig.Name;
         List<Type> excludedTypes = this.GetExcludedTypes(ruleConfig.Exclusions);
-        var ns = "Mooble.StaticAnalysis.Rules.";
+        Assembly assembly = typeof(StaticAnalysis).Assembly;
 
-        if (!klassName.StartsWith(ns)) {
-          klassName = ns + klassName;
+        if (string.IsNullOrEmpty(ruleConfig.Assembly)) {
+          var ns = "Mooble.StaticAnalysis.Rules.";
+
+          if (!klassName.StartsWith(ns)) {
+            klassName = ns + klassName;
+          }
+        } else {
+          assembly = Assembly.Load(ruleConfig.Assembly);
         }
 
-        Type ruleClass = typeof(StaticAnalysis).Assembly.GetType(klassName);
+        Type ruleClass = assembly.GetType(klassName);
 
         if (ruleClass == null) {
           Log.Debug("Could not find rule class: " + klassName + ". Skipping.");

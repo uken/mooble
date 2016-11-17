@@ -39,7 +39,33 @@ in it or it may be that your `MonoBehaviour` is overly general.
 
 ### Writing Your Own Rules
 
-This feature is currently in progress.
+In order to write your own rule, you need to implement the following classes:
+
+1. A class that implements `Rule<T>`, where `T` is the type of component you'd
+   like to validate (otherwise, `T` must be `GameObject`). Take a look at the
+   `Rule` file to see which abstract methods must be implemented.
+
+2. A class that implements `IViolation`. This is the type of violation that
+   your rule generates. Take a look at the interface in this repository to see
+   which methods it must implement.
+
+After you have implemented the class, add an entry to `moobleconfig.json` for
+that class. The class name must be fully namespaced. You must also provide the
+assembly name which you can find out by running the following code locally:
+
+```csharp
+using System;
+using System.Reflection;
+
+public class FindAssembly : MonoBehaviour {
+  private void Start() {
+    // SomeClass is a class in your project
+    Debug.Log(typeof(SomeClass).Assembly.GetName().Name);
+  }
+}
+```
+
+In most cases it will be `"Assembly-CSharp"`.
 
 ### Configuration Options
 
