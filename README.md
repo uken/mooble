@@ -74,9 +74,26 @@ that the menu items look for when trying to determine what rules you want to
 run over your scenes and prefabs. Take a look at the `moobleconfig.json` file
 provided in this repository for an example.
 
-Any rule that is excluded from the list will not be run. Not all rules accept
-`Exclusions` lists; take a look at the code for the specific rule to check
-whether it accepts exclusions.
+Only rules listed in the `Rules` list will be run.
+
+#### Exclusions
+
+The `Exclusions` list is to allow users to provide various types that the
+rule in question should _not_ run on. This type name must be qualified
+with the full namespace and the assembly it belongs to. For example, if you
+don't want to run the `NoInactiveBehaviours` rule on `Animator` behaviours,
+add it to the exclusion list:
+
+```json
+"Exclusions": [ "UnityEngine.Animator, UnityEngine" ]
+```
+
+Other common assemblies include:
+* `Assembly-CSharp` for code in your project
+* `Assembly-CSharp-firstpass` for code in your plugins directory
+
+:info: Not all rules accept `Exclusions` lists; take a look at the code for the
+specific rule to check whether it accepts exclusions.
 
 ### Build Integration
 

@@ -18,7 +18,6 @@ namespace Mooble.StaticAnalysis {
       for (var i = 0; i < this.config.Rules.Length; i++) {
         var ruleConfig = this.config.Rules[i];
         var klassName = ruleConfig.Name;
-        List<Type> excludedTypes = this.GetExcludedTypes(ruleConfig.Exclusions);
         Assembly assembly = typeof(StaticAnalysis).Assembly;
 
         if (string.IsNullOrEmpty(ruleConfig.Assembly)) {
@@ -44,6 +43,7 @@ namespace Mooble.StaticAnalysis {
         }
 
         var level = (ViolationLevel)Enum.Parse(typeof(ViolationLevel), ruleConfig.ViolationLevel);
+        List<Type> excludedTypes = this.GetExcludedTypes(ruleConfig.Exclusions);
 
         var rule = this.ConstructRule(ruleClass, level, excludedTypes);
         var ruleObjectType = ruleClass.BaseType.GetGenericArguments()[0];
@@ -76,7 +76,7 @@ namespace Mooble.StaticAnalysis {
       var excludedTypes = new List<Type>();
 
       for (var i = 0; i < excludedTypeNames.Length; i++) {
-        Type type = typeof(GameObject).Assembly.GetType(excludedTypeNames[i]);
+        Type type = Type.GetType(excludedTypeNames[i]);
 
         if (type == null) {
           Log.Debug("Not including exclusion of type " + excludedTypeNames[i] + "; could not find type.");
