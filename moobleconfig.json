@@ -1,0 +1,17 @@
+{
+  "PrefabLocations": [
+    "Assets/Prefabs"
+  ],
+  "Rules": [
+    {
+      "Name": "NoDuplicateComponents",
+      "ViolationLevel": "Warning",
+      "Exclusions": [ "UnityEngine.UI.Outline" ]
+    },
+    {
+      "Name": "NoMissingObjectReferences",
+      "ViolationLevel": "Error",
+      "Exclusions": [ "UnityEngine.UI.GraphicRaycaster" ]
+    }
+  ]
+}
