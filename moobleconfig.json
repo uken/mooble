@@ -21,7 +21,7 @@
     {
       "Name": "NoInactiveBehaviours",
       "ViolationLevel": "Warning",
-      "Exclusions": []
+      "Exclusions": [ "UnityEngine.Animator", "UnityEngine.FlareLayer" ]
     }
   ]
 }

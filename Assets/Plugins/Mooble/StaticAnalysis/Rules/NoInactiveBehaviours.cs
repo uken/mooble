@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoInactiveBehaviours : Rule<Behaviour> {
-    public NoInactiveBehaviours(ViolationLevel level = ViolationLevel.Warning) : base(level) {
+    private List<Type> excludedTypes;
+
+    public NoInactiveBehaviours(ViolationLevel level = ViolationLevel.Warning, List<Type> excludedTypes = null) : base(level) {
+      this.excludedTypes = excludedTypes ?? new List<Type>();
     }
 
     public override List<IViolation> Handle(object thing) {
@@ -14,7 +18,7 @@ namespace Mooble.StaticAnalysis.Rules {
     public override List<IViolation> Handle(Behaviour thing) {
       var violations = new List<IViolation>();
 
-      if (thing == null || thing.enabled) {
+      if (thing == null || thing.enabled || this.excludedTypes.Contains(thing.GetType())) {
         return violations;
       }
 
