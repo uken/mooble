@@ -3,6 +3,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Mooble.StaticAnalysis {
   public abstract class Rule {
+    protected Rule(ViolationLevel level) {
+      this.Level = level;
+    }
+
+    public readonly ViolationLevel Level;
+
     public string Name {
       get {
         return this.GetType().Name;
@@ -17,10 +23,7 @@ namespace Mooble.StaticAnalysis {
   "SA1402:FileMayOnlyContainASingleClass",
   Justification = "The rule class exists only because of C#'s silly generic system.")]
   public abstract class Rule<T> : Rule {
-    public readonly ViolationLevel Level;
-
-    protected Rule(ViolationLevel level) {
-      this.Level = level;
+    protected Rule(ViolationLevel level) : base(level) {
     }
 
     public abstract List<IViolation> Handle(T thing);

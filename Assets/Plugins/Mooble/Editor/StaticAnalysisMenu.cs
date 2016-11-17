@@ -10,7 +10,7 @@ namespace Mooble.EditorExtension {
   using StaticAnalysis.Rules;
 
   public static class StaticAnalysisMenu {
-    [MenuItem("Mooble/StaticAnalysis/AnalyzePrefabs")]
+    [MenuItem("Mooble/Static Analysis/Analyze All Prefabs")]
     public static void PrintPrefabAnalysis() {
       var config = Config.Config.LoadFromFile();
       var sa = LoadStaticAnalysisRules(config);
@@ -33,7 +33,7 @@ namespace Mooble.EditorExtension {
       }
     }
 
-    [MenuItem("Mooble/StaticAnalysis/AnalyzeScene")]
+    [MenuItem("Mooble/Static Analysis/Analyze This Scene")]
     public static void PrintSceneAnalysis() {
       var config = Config.Config.LoadFromFile();
       var sa = LoadStaticAnalysisRules(config);
