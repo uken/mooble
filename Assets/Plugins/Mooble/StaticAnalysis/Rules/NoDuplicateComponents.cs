@@ -5,9 +5,7 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoDuplicateComponents : Rule<GameObject> {
-    public const string NAME = "DuplicateComponent";
-
-    public NoDuplicateComponents() : base(NAME, ViolationLevel.Warning) {
+    public NoDuplicateComponents(ViolationLevel level = ViolationLevel.Warning) : base(level) {
     }
 
     public override List<IViolation> Handle(object thing) {

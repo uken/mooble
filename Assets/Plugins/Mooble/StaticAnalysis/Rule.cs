@@ -11,12 +11,16 @@ namespace Mooble.StaticAnalysis {
   "SA1402:FileMayOnlyContainASingleClass",
   Justification = "The rule class exists only because of C#'s silly generic system.")]
   public abstract class Rule<T> : Rule {
-    public readonly string Name;
     public readonly ViolationLevel Level;
 
-    protected Rule(string name, ViolationLevel level) {
-      this.Name = name;
+    protected Rule(ViolationLevel level) {
       this.Level = level;
+    }
+
+    public string Name {
+      get {
+        return this.GetType().Name;
+      }
     }
 
     public abstract List<IViolation> Handle(T thing);

@@ -4,9 +4,7 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoInactiveBehaviours : Rule<Behaviour> {
-    public const string NAME = "NoInactiveBehaviours";
-
-    public NoInactiveBehaviours() : base(NAME, ViolationLevel.Warning) {
+    public NoInactiveBehaviours(ViolationLevel level = ViolationLevel.Warning) : base(level) {
     }
 
     public override List<IViolation> Handle(object thing) {
