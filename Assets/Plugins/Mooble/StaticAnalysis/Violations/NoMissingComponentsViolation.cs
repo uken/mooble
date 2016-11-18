@@ -12,8 +12,7 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string Format() {
       return string.Format(
-        "{0}: GameObject {1} has an undefined component (missing script reference).",
-        this.rule.Name,
+        "GameObject {0} has an undefined component (missing script reference).",
         this.gameObject.name);
     }
 

@@ -7,6 +7,7 @@ using UnityEngine;
 
 namespace Mooble.EditorExtensions {
   public class ConsoleWindow : EditorWindow {
+    private const string ALL = "All";
     private static ConsoleWindow instance;
 
     private Vector2 drawPosition;
@@ -24,11 +25,14 @@ namespace Mooble.EditorExtensions {
     private bool showWarnings = true;
 
     private Dictionary<Rule, List<IViolation>> rulesAndTheirViolations;
+    private List<string> ruleNames;
 
     private float logListMaxWidth;
     private float logListLineHeight;
     private Vector2 logListScrollPosition;
     private int selectedLog = -1;
+    private int popupIndex;
+    private string longestRuleName;
 
     public static ConsoleWindow Instance {
       get {
@@ -97,18 +101,40 @@ namespace Mooble.EditorExtensions {
       this.DrawScrollRect(this.drawPosition.y, toDisplay);
     }
 
-    private List<ConsoleViolation> PopulateErrorsAndWarnings() {
+    private void SetupRuleDictAndNameList() {
       if (this.rulesAndTheirViolations == null) {
         this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
       }
+
+      if (this.ruleNames == null) {
+        this.ruleNames = new List<string> { ALL };
+        this.longestRuleName = ALL;
+
+        foreach (var kvp in this.rulesAndTheirViolations) {
+          if (kvp.Value.Count > 0) {
+            this.ruleNames.Add(kvp.Key.Name);
+            this.longestRuleName = this.longestRuleName.Length > kvp.Key.Name.Length ? this.longestRuleName : kvp.Key.Name;
+          }
+        }
+      }
+    }
+
+    private List<ConsoleViolation> PopulateErrorsAndWarnings() {
+      this.SetupRuleDictAndNameList();
 
       var toDisplay = new List<ConsoleViolation>();
 
       if (this.showErrors) {
         foreach (var kvp in this.rulesAndTheirViolations) {
           if (kvp.Key.Level == ViolationLevel.Error) {
+            if (kvp.Value.Count == 0) {
+              continue;
+            }
+
             foreach (var v in kvp.Value) {
-              toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
+              if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
+                toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
+              }
             }
           }
         }
@@ -119,8 +145,14 @@ namespace Mooble.EditorExtensions {
       if (this.showWarnings) {
         foreach (var kvp in this.rulesAndTheirViolations) {
           if (kvp.Key.Level == ViolationLevel.Warning) {
+            if (kvp.Value.Count == 0) {
+              continue;
+            }
+
             foreach (var v in kvp.Value) {
-              toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
+              if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
+                toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
+              }
             }
           }
         }
@@ -131,10 +163,14 @@ namespace Mooble.EditorExtensions {
       return toDisplay;
     }
 
+    private void Clear() {
+      this.console.ErrorCount = 0;
+      this.console.WarningCount = 0;
+      this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
+    }
+
     private void DrawToolbar() {
-      if (this.rulesAndTheirViolations == null) {
-        this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
-      }
+      this.SetupRuleDictAndNameList();
 
       var toolbarStyle = EditorStyles.toolbarButton;
 
@@ -142,7 +178,7 @@ namespace Mooble.EditorExtensions {
 
       Vector2 sizeOfElement;
       if (this.DrawButton("Clear", EditorStyles.toolbarButton, out sizeOfElement)) {
-        // TODO: write code to clear logger;
+        this.Clear();
       }
 
       this.drawPosition.x = position.width * 0.25f;
@@ -150,20 +186,12 @@ namespace Mooble.EditorExtensions {
       this.DrawLabel("Rule: ", EditorStyles.toolbarButton, out sizeOfElement);
       this.drawPosition.x += sizeOfElement.x;
 
-      var rules = this.rulesAndTheirViolations.Keys;
-      var ruleNames = new List<string>();
-      var longestRuleName = string.Empty;
-      foreach (var rule in rules) {
-        ruleNames.Add(rule.Name);
-        longestRuleName = longestRuleName.Length > rule.Name.Length ? longestRuleName : rule.Name;
-      }
-
-      EditorGUI.Popup(
+      this.popupIndex = EditorGUI.Popup(
         new Rect(
           this.drawPosition,
-          toolbarStyle.CalcSize(new GUIContent(longestRuleName))),
-        0,
-        ruleNames.ToArray(),
+          toolbarStyle.CalcSize(new GUIContent(this.longestRuleName))),
+        this.popupIndex,
+        this.ruleNames.ToArray(),
         EditorStyles.toolbarPopup);
 
       var errorToggleContent = new GUIContent(this.console.ErrorCount.ToString(), this.errorIcon);
@@ -190,8 +218,8 @@ namespace Mooble.EditorExtensions {
       this.drawPosition.x = 0;
     }
 
-    private void DrawScrollRect(float height, IList<ConsoleViolation> toDisplay) {
-      if (this.rulesAndTheirViolations == null) {
+    private void DrawScrollRect(float height, IList<ConsoleViolation> filteredList) {
+      if (filteredList.Count == 0) {
         return;
       }
 
@@ -199,8 +227,8 @@ namespace Mooble.EditorExtensions {
       var logLineStyle = this.logEntryEven;
       var logLineSize = logLineStyle.CalcSize(new GUIContent("A"));
 
-      for (var k = 0; k < toDisplay.Count; k++) {
-        var size = logLineStyle.CalcSize(this.GUIContentForIViolation(toDisplay[k]));
+      for (var k = 0; k < filteredList.Count; k++) {
+        var size = logLineStyle.CalcSize(this.GUIContentForIViolation(filteredList[k]));
         this.logListMaxWidth = Mathf.Max(this.logListMaxWidth, size.x);
         this.logListLineHeight = Mathf.Max(this.logListLineHeight, size.y);
       }
@@ -211,17 +239,17 @@ namespace Mooble.EditorExtensions {
       var contentRect = new Rect(0, 0, Mathf.Max(this.logListMaxWidth, scrollRect.width), this.rulesAndTheirViolations.Count * this.logListLineHeight);
       this.logListScrollPosition = GUI.BeginScrollView(scrollRect, this.logListScrollPosition, contentRect);
 
-      for (var i = 0; i < toDisplay.Count; i++) {
+      for (var i = 0; i < filteredList.Count; i++) {
         logLineStyle = i % 2 == 0 ? this.logEntryEven : this.logEntryOdd;
         GUI.backgroundColor = i == this.selectedLog ? new Color(0.5f, 0.5f, 1) : Color.white;
 
         var rect = new Rect(0, this.logListLineHeight * i, contentRect.width, this.logListLineHeight);
-        if (GUI.Button(rect, this.GUIContentForIViolation(toDisplay[i]), logLineStyle)) {
+        if (GUI.Button(rect, this.GUIContentForIViolation(filteredList[i]), logLineStyle)) {
           if (i != this.selectedLog) {
             this.selectedLog = i;
           }
 
-          var go = toDisplay[i].Violation.GetObject();
+          var go = filteredList[i].Violation.GetObject();
           if (go != null) {
             Selection.activeObject = go;
           }

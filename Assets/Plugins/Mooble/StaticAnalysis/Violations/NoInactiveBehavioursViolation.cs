@@ -12,8 +12,7 @@ namespace Mooble.StaticAnalysis {
 
     public string Format() {
       return string.Format(
-        "{0}: {1}.{2} is inactive.",
-        this.rule.Name,
+        "{0}.{1} is inactive.",
         this.component.name,
         this.component.GetType());
     }
