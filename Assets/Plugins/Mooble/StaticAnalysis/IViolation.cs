@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 namespace Mooble.StaticAnalysis {
   public interface IViolation {
     ViolationLevel Level { get; set; }
@@ -7,3 +8,4 @@ namespace Mooble.StaticAnalysis {
     UnityEngine.Object GetObject();
   }
 }
+#endif

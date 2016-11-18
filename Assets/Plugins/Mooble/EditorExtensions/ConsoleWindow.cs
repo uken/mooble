@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.Collections.Generic;
 
 using Mooble.StaticAnalysis;
@@ -52,11 +53,13 @@ namespace Mooble.EditorExtensions {
     public void SetViolations(Dictionary<Rule, List<IViolation>> violations) {
       this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
       this.rulesAndTheirViolations = StaticAnalysis.StaticAnalysis.MergeRuleViolationDictionary(this.rulesAndTheirViolations, violations);
+      EditorUtility.SetDirty(this);
     }
 
     private static void Init() {
       instance = EditorWindow.GetWindow(typeof(ConsoleWindow), false, "Mooble") as ConsoleWindow;
       instance.Show();
+      EditorApplication.hierarchyWindowChanged += instance.Clear;
     }
 
     private void OnEnable() {
@@ -166,7 +169,9 @@ namespace Mooble.EditorExtensions {
     private void Clear() {
       this.console.ErrorCount = 0;
       this.console.WarningCount = 0;
-      this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
+      this.popupIndex = 0;
+      this.rulesAndTheirViolations = null;
+      this.ruleNames = null;
     }
 
     private void DrawToolbar() {
@@ -185,6 +190,8 @@ namespace Mooble.EditorExtensions {
 
       this.DrawLabel("Rule: ", EditorStyles.toolbarButton, out sizeOfElement);
       this.drawPosition.x += sizeOfElement.x;
+
+      Debug.Log(this.ruleNames.ToArray().Length);
 
       this.popupIndex = EditorGUI.Popup(
         new Rect(
@@ -294,3 +301,4 @@ namespace Mooble.EditorExtensions {
     }
   }
 }
+#endif

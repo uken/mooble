@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 
 using Mooble.StaticAnalysis.Violation;
 using UnityEngine;
@@ -42,3 +43,4 @@ namespace Mooble.StaticAnalysis.Rules {
     }
   }
 }
+#endif

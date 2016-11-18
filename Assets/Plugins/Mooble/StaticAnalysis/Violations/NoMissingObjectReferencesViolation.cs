@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Violation {
@@ -26,3 +27,4 @@ namespace Mooble.StaticAnalysis.Violation {
     }
   }
 }
+#endif

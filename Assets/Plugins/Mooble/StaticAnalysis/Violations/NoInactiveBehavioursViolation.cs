@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 
 namespace Mooble.StaticAnalysis {
@@ -23,3 +24,4 @@ namespace Mooble.StaticAnalysis {
     }
   }
 }
+#endif

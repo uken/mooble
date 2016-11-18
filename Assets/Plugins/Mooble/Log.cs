@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Diagnostics.CodeAnalysis;
 
 namespace Mooble {
@@ -13,3 +14,4 @@ namespace Mooble {
     }
   }
 }
+#endif

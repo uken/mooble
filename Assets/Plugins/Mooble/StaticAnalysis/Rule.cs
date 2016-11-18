@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
@@ -29,3 +30,4 @@ namespace Mooble.StaticAnalysis {
     public abstract List<IViolation> Handle(T thing);
   }
 }
+#endif

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Violation {
   public class NoMissingComponentsViolation : IViolation {
@@ -22,3 +23,4 @@ namespace Mooble.StaticAnalysis.Violation {
     }
   }
 }
+#endif
