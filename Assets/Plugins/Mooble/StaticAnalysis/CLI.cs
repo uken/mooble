@@ -54,7 +54,7 @@ namespace Mooble.StaticAnalysis {
         stringBuilder.Append("\nAnalyzing scene: " + scene.name);
 
         foreach (var root in scene.GetRootGameObjects()) {
-          stringBuilder.Append("\n\tAnalyzing root object in scene: " + root.name);
+          stringBuilder.Append("\n  Analyzing root object in scene: " + root.name);
           Dictionary<Rule, List<IViolation>> violations = sa.Analyze(root);
 
           var foundErrorThisTime = AppendViolations(stringBuilder, violations);
@@ -104,7 +104,7 @@ namespace Mooble.StaticAnalysis {
           continue;
         }
 
-        stringBuilder.Append("\n\t\tViolations for rule: ");
+        stringBuilder.Append("\n    Violations for rule: ");
         stringBuilder.Append(kvp.Key.Name);
 
         foreach (var violation in kvp.Value) {
@@ -113,7 +113,7 @@ namespace Mooble.StaticAnalysis {
           }
 
           stringBuilder.Append("\n");
-          stringBuilder.Append("\t\t\t");
+          stringBuilder.Append("      ");
           stringBuilder.Append(FullPath(violation.GetObject()));
           stringBuilder.Append(": ");
           stringBuilder.Append(violation.Format());
