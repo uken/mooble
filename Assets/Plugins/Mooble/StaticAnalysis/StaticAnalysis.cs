@@ -13,18 +13,6 @@ namespace Mooble.StaticAnalysis {
       this.componentRules = new Dictionary<Type, List<Rule>>();
     }
 
-    public static Dictionary<Rule, List<IViolation>> MergeRuleViolationDictionary(Dictionary<Rule, List<IViolation>> violations1, Dictionary<Rule, List<IViolation>> violations2) {
-      foreach (var more in violations2) {
-        if (!violations1.ContainsKey(more.Key)) {
-          violations1[more.Key] = more.Value;
-        } else {
-          violations1[more.Key].AddRange(more.Value);
-        }
-      }
-
-      return violations1;
-    }
-
     public List<string> EnabledRuleNames {
       get {
         var allRules = new List<string>();
@@ -41,6 +29,18 @@ namespace Mooble.StaticAnalysis {
 
         return allRules;
       }
+    }
+
+    public static Dictionary<Rule, List<IViolation>> MergeRuleViolationDictionary(Dictionary<Rule, List<IViolation>> violations1, Dictionary<Rule, List<IViolation>> violations2) {
+      foreach (var more in violations2) {
+        if (!violations1.ContainsKey(more.Key)) {
+          violations1[more.Key] = more.Value;
+        } else {
+          violations1[more.Key].AddRange(more.Value);
+        }
+      }
+
+      return violations1;
     }
 
     public void RegisterComponentRule(Type type, Rule rule) {

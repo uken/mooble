@@ -3,11 +3,11 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Mooble.StaticAnalysis {
   public abstract class Rule {
+    public readonly ViolationLevel Level;
+
     protected Rule(ViolationLevel level) {
       this.Level = level;
     }
-
-    public readonly ViolationLevel Level;
 
     public string Name {
       get {

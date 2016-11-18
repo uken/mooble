@@ -14,8 +14,7 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string Format() {
       return string.Format(
-        "{0} {1}: Field '{4}' from Component '{3}' of '{2}' is undefined.",
-        this.rule.Level,
+        "{0}: Field '{3}' from Component '{2}' of '{1}' is undefined.",
         this.rule.Name,
         this.component.gameObject.name,
         this.component.GetType(),

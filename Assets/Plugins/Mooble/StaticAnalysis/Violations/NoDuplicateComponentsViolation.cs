@@ -16,8 +16,7 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string Format() {
       return string.Format(
-        "{0} {1}: there are {2} {3} scripts on {4}",
-        this.rule.Level,
+        "{0}: there are {1} {2} scripts on {3}",
         this.rule.Name,
         this.count,
         this.componentName,

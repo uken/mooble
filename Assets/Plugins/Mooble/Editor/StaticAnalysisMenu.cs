@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -28,7 +27,7 @@ namespace Mooble.EditorExtension {
         violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(obj));
       }
 
-      EditorExtensions.ConsoleEditorWindow.Instance.SetViolations(violations);
+      EditorExtensions.ConsoleWindow.Instance.SetViolations(violations);
     }
 
     [MenuItem("Mooble/Static Analysis/Analyze This Scene")]
@@ -49,7 +48,7 @@ namespace Mooble.EditorExtension {
         }
       }
 
-      EditorExtensions.ConsoleEditorWindow.Instance.SetViolations(violations);
+      EditorExtensions.ConsoleWindow.Instance.SetViolations(violations);
     }
 
     private static StaticAnalysis LoadStaticAnalysisRules(Config.Config config) {
