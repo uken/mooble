@@ -4,22 +4,30 @@ using UnityEngine;
 namespace Mooble.StaticAnalysis.Violation {
   public class NoMissingObjectReferencesViolation : IViolation {
     private Component component;
-    private string name;
+    private string fieldName;
 
     public NoMissingObjectReferencesViolation(ViolationLevel level, Component c, string n) {
       this.component = c;
       this.Level = level;
-      this.name = n;
+      this.fieldName = n;
     }
 
     public ViolationLevel Level { get; set; }
 
-    public string Format() {
+    public string FormatCLI() {
       return string.Format(
-        "Field '{2}' from Component '{1}' of '{0}' is undefined.",
-        this.component.gameObject.name,
+        "{0}: Field {2} from Component {1} is undefined.",
+        Utility.FormatObjectPath(this.component.gameObject),
         this.component.GetType(),
-        this.name);
+        this.fieldName);
+    }
+
+    public string FormatEditor() {
+      return string.Format(
+        "Field {2} from Component {1} on {0} is undefined.",
+        Utility.FormatPrimaryObject(this.component.gameObject.name),
+        Utility.FormatSecondaryObject(this.component.GetType().ToString()),
+        Utility.FormatTertiaryObject(this.fieldName));
     }
 
     public UnityEngine.Object GetObject() {

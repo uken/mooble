@@ -12,10 +12,16 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public ViolationLevel Level { get; set; }
 
-    public string Format() {
+    public string FormatCLI() {
       return string.Format(
-        "GameObject {0} has an undefined component (missing script reference).",
-        this.gameObject.name);
+        "{0}: GameObject has an undefined Component (missing script reference).",
+        Utility.FormatObjectPath(this.gameObject));
+    }
+
+    public string FormatEditor() {
+      return string.Format(
+        "GameObject {0} has an undefined Component (missing script reference).",
+        Utility.FormatPrimaryObject(this.gameObject.name));
     }
 
     public UnityEngine.Object GetObject() {

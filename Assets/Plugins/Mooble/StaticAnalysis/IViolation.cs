@@ -3,7 +3,9 @@ namespace Mooble.StaticAnalysis {
   public interface IViolation {
     ViolationLevel Level { get; set; }
 
-    string Format();
+    string FormatCLI();
+
+    string FormatEditor();
 
     UnityEngine.Object GetObject();
   }

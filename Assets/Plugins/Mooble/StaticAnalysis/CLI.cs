@@ -115,42 +115,11 @@ namespace Mooble.StaticAnalysis {
 
           stringBuilder.Append("\n");
           stringBuilder.Append("      ");
-          stringBuilder.Append(FullPath(violation.GetObject()));
-          stringBuilder.Append(": ");
-          stringBuilder.Append(violation.Format());
+          stringBuilder.Append(violation.FormatCLI());
         }
       }
 
       return foundError;
-    }
-
-    private static string FullPath(UnityEngine.Object o) {
-      if (o is Component) {
-        return FullPath(o as Component);
-      } else {
-        return FullPath(o as GameObject);
-      }
-    }
-
-    private static string FullPath(Component c) {
-      return FullPath(c.gameObject);
-    }
-
-    private static string FullPath(GameObject gameObject) {
-      var path = new StringBuilder();
-
-      var transform = gameObject.transform;
-      path.Append(transform.name);
-
-      while (transform.parent != null) {
-        transform = transform.parent;
-        path.Insert(0, "/");
-        path.Insert(0, transform.name);
-      }
-
-      path.Insert(0, "/");
-
-      return path.ToString();
     }
   }
 }

@@ -269,7 +269,7 @@ namespace Mooble.EditorExtensions {
     }
 
     private GUIContent GUIContentForIViolation(ConsoleViolation violation) {
-      return new GUIContent(violation.Violation.Format(), violation.Level == ViolationLevel.Warning ? this.warningIcon : this.errorIcon);
+      return new GUIContent(violation.Violation.FormatEditor(), violation.Level == ViolationLevel.Warning ? this.warningIcon : this.errorIcon);
     }
 
     private bool DrawButton(string text, GUIStyle style, out Vector2 size) {

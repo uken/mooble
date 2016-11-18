@@ -16,12 +16,20 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public ViolationLevel Level { get; set; }
 
-    public string Format() {
+    public string FormatCLI() {
       return string.Format(
-        "There are {0} {1} scripts on {2}",
+        "{2}: There are multiple ({0}) '{1}' Components.",
         this.count,
         this.componentName,
-        this.gameObject.name);
+        Utility.FormatObjectPath(this.gameObject));
+    }
+
+    public string FormatEditor() {
+      return string.Format(
+        "There are multiple ({0}) {1} Components on {2}.",
+        this.count,
+        Utility.FormatSecondaryObject(this.componentName),
+        Utility.FormatPrimaryObject(this.gameObject.name));
     }
 
     public UnityEngine.Object GetObject() {

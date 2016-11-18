@@ -23,7 +23,7 @@ namespace Mooble.StaticAnalysis.Rules {
         return violations;
       }
 
-      violations.Add(new NoInactiveBehavioursViolation(this.Level, thing));
+      violations.Add(new Violation.NoInactiveBehavioursViolation(this.Level, thing));
 
       return violations;
     }
