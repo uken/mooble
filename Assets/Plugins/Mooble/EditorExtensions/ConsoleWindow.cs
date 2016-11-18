@@ -191,8 +191,6 @@ namespace Mooble.EditorExtensions {
       this.DrawLabel("Rule: ", EditorStyles.toolbarButton, out sizeOfElement);
       this.drawPosition.x += sizeOfElement.x;
 
-      Debug.Log(this.ruleNames.ToArray().Length);
-
       this.popupIndex = EditorGUI.Popup(
         new Rect(
           this.drawPosition,
