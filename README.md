@@ -12,13 +12,13 @@ and allowing you to customize the static analysis by writing your own rules.
 
 #### `NoDuplicateComponents`
 
-This rule makes sure that GameObjects do not have two of the same type of
-Component, e.g.  no GameObject has two Text components, etc.
+This rule makes sure that `GameObjects` do not have two of the same type of
+`Component`, e.g.  no `GameObject` has two `Text` components, etc.
 
 #### `NoInactiveBehaviours`
 
 This rule ensures that no
-[Behaviour](https://docs.unity3d.com/ScriptReference/Behaviour.html) is set to
+[`Behaviour`](https://docs.unity3d.com/ScriptReference/Behaviour.html) is set to
 inactive. You can exclude certain types from this rule (i.e., allowing them to
 be inactive in the scene or prefab) by specifying an `Exclusions` array in the
 configuration. See [config](# Configuration Options) for more details.
@@ -32,7 +32,7 @@ something has likely gone wrong!
 #### `NoMissingObjectReferences`
 
 This rule outputs a warning if you have a
-[MonoBehaviour](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html)
+[`MonoBehaviour`](https://docs.unity3d.com/ScriptReference/MonoBehaviour.html)
 with unassigned `public` or `SerializeField` fields - i.e. those with `null`
 values. This can be a smell in that your script either has some unused code
 in it or it may be that your `MonoBehaviour` is overly general.
