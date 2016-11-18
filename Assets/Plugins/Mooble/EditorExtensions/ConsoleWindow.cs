@@ -111,13 +111,14 @@ namespace Mooble.EditorExtensions {
 
       if (this.ruleNames == null) {
         this.ruleNames = new List<string> { ALL };
-        this.longestRuleName = ALL;
+      }
 
-        foreach (var kvp in this.rulesAndTheirViolations) {
-          if (kvp.Value.Count > 0) {
-            this.ruleNames.Add(kvp.Key.Name);
-            this.longestRuleName = this.longestRuleName.Length > kvp.Key.Name.Length ? this.longestRuleName : kvp.Key.Name;
-          }
+      this.longestRuleName = ALL;
+
+      foreach (var kvp in this.rulesAndTheirViolations) {
+        if (kvp.Value.Count > 0) {
+          this.ruleNames.Add(kvp.Key.Name);
+          this.longestRuleName = this.longestRuleName.Length > kvp.Key.Name.Length ? this.longestRuleName : kvp.Key.Name;
         }
       }
     }
@@ -170,8 +171,8 @@ namespace Mooble.EditorExtensions {
       this.console.ErrorCount = 0;
       this.console.WarningCount = 0;
       this.popupIndex = 0;
-      this.rulesAndTheirViolations = null;
-      this.ruleNames = null;
+      this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
+      this.ruleNames = new List<string> { ALL };
     }
 
     private void DrawToolbar() {
