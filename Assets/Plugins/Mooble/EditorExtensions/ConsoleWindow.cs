@@ -27,6 +27,7 @@ namespace Mooble.EditorExtensions {
 
     private float logListMaxWidth;
     private float logListLineHeight;
+    private Vector2 logListScrollPosition;
     private int selectedLog = -1;
 
     public static ConsoleWindow Instance {
@@ -208,6 +209,7 @@ namespace Mooble.EditorExtensions {
 
       var scrollRect = new Rect(this.drawPosition, new Vector2(position.width, position.height));
       var contentRect = new Rect(0, 0, Mathf.Max(this.logListMaxWidth, scrollRect.width), this.rulesAndTheirViolations.Count * this.logListLineHeight);
+      this.logListScrollPosition = GUI.BeginScrollView(scrollRect, this.logListScrollPosition, contentRect);
 
       for (var i = 0; i < toDisplay.Count; i++) {
         logLineStyle = i % 2 == 0 ? this.logEntryEven : this.logEntryOdd;

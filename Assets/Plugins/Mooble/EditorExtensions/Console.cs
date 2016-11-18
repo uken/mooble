@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 
-using Mooble.StaticAnalysis;
 using UnityEngine;
 
 namespace Mooble.EditorExtensions {
@@ -9,8 +8,6 @@ namespace Mooble.EditorExtensions {
     public int ErrorCount { get; set; }
 
     public int WarningCount { get; set; }
-
-    public Dictionary<string, IViolation> EnabledRules { get; private set; }
 
     public List<string> RuleNames { get; private set; }
 

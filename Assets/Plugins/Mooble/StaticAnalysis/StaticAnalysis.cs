@@ -33,10 +33,10 @@ namespace Mooble.StaticAnalysis {
 
     public static Dictionary<Rule, List<IViolation>> MergeRuleViolationDictionary(Dictionary<Rule, List<IViolation>> violations1, Dictionary<Rule, List<IViolation>> violations2) {
       foreach (var more in violations2) {
-        if (!violations1.ContainsKey(more.Key)) {
-          violations1[more.Key] = more.Value;
-        } else {
+        if (violations1.ContainsKey(more.Key)) {
           violations1[more.Key].AddRange(more.Value);
+        } else {
+          violations1[more.Key] = more.Value;
         }
       }
 
