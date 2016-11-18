@@ -53,7 +53,7 @@ namespace Mooble.EditorExtensions {
     public void SetViolations(Dictionary<Rule, List<IViolation>> violations) {
       this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
       this.rulesAndTheirViolations = StaticAnalysis.StaticAnalysis.MergeRuleViolationDictionary(this.rulesAndTheirViolations, violations);
-      EditorUtility.SetDirty(this);
+      this.Repaint();
     }
 
     private static void Init() {
