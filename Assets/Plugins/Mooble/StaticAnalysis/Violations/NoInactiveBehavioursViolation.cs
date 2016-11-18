@@ -2,13 +2,14 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis {
   public class NoInactiveBehavioursViolation : IViolation {
-    private Rules.NoInactiveBehaviours rule;
     private Component component;
 
-    public NoInactiveBehavioursViolation(Rules.NoInactiveBehaviours r, Component c) {
-      this.rule = r;
+    public NoInactiveBehavioursViolation(ViolationLevel level, Component c) {
+      this.Level = level;
       this.component = c;
     }
+
+    public ViolationLevel Level { get; set; }
 
     public string Format() {
       return string.Format(

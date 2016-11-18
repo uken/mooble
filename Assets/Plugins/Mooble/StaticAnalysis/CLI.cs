@@ -33,6 +33,7 @@ namespace Mooble.StaticAnalysis {
         var sa = new StaticAnalysisBuilder(config).Get();
 
         var stringBuilder = new System.Text.StringBuilder();
+        bool foundError = false;
 
         foreach (var scene in scenes) {
           stringBuilder.Append("\nAnalyzing scene: " + scene.name);
@@ -50,6 +51,10 @@ namespace Mooble.StaticAnalysis {
               stringBuilder.Append(kvp.Key.Name);
 
               foreach (var violation in kvp.Value) {
+                if (violation.Level == ViolationLevel.Error) {
+                  foundError = true;
+                }
+
                 stringBuilder.Append("\n");
                 stringBuilder.Append("\t\t\t");
                 stringBuilder.Append(violation.Format());
@@ -59,6 +64,10 @@ namespace Mooble.StaticAnalysis {
         }
 
         Log.Debug(stringBuilder.ToString());
+
+        if (foundError) {
+          throw new System.Exception("Error violation found!");
+        }
       }
   }
 }

@@ -34,7 +34,7 @@ namespace Mooble.StaticAnalysis.Rules {
 
       foreach (var kvp in s) {
         if (kvp.Value > 1) {
-          violations.Add(new NoDuplicateComponentsViolation(this, thing, kvp.Key, kvp.Value));
+          violations.Add(new NoDuplicateComponentsViolation(this.Level, thing, kvp.Key, kvp.Value));
         }
       }
 

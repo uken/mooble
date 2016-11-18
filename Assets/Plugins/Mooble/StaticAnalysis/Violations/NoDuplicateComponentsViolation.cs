@@ -2,17 +2,18 @@
 
 namespace Mooble.StaticAnalysis.Violation {
   public class NoDuplicateComponentsViolation : IViolation {
-    private Rules.NoDuplicateComponents rule;
     private GameObject gameObject;
     private string componentName;
     private int count;
 
-    public NoDuplicateComponentsViolation(Rules.NoDuplicateComponents r, GameObject o, string c, int n) {
-      this.rule = r;
+    public NoDuplicateComponentsViolation(ViolationLevel level, GameObject o, string c, int n) {
+      this.Level = level;
       this.gameObject = o;
       this.componentName = c;
       this.count = n;
     }
+
+    public ViolationLevel Level { get; set; }
 
     public string Format() {
       return string.Format(

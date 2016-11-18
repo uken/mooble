@@ -2,13 +2,14 @@
 
 namespace Mooble.StaticAnalysis.Violation {
   public class NoMissingComponentsViolation : IViolation {
-    private Rules.NoMissingComponents rule;
     private GameObject gameObject;
 
-    public NoMissingComponentsViolation(Rules.NoMissingComponents r, GameObject o) {
-      this.rule = r;
+    public NoMissingComponentsViolation(ViolationLevel level, GameObject o) {
+      this.Level = level;
       this.gameObject = o;
     }
+
+    public ViolationLevel Level { get; set; }
 
     public string Format() {
       return string.Format(

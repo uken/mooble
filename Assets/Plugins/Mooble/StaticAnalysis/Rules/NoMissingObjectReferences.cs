@@ -42,7 +42,7 @@ namespace Mooble.StaticAnalysis.Rules {
         }
 
         if (field.FieldType.IsClass && val == null) {
-          violations.Add(new NoMissingObjectReferencesViolation(this, thing, field.Name));
+          violations.Add(new NoMissingObjectReferencesViolation(this.Level, thing, field.Name));
         }
       }
 

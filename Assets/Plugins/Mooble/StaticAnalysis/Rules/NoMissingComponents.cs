@@ -18,7 +18,7 @@ namespace Mooble.StaticAnalysis.Rules {
 
       foreach (var component in allComponents) {
         if (component == null) {
-          violations.Add(new NoMissingComponentsViolation(this, thing));
+          violations.Add(new NoMissingComponentsViolation(this.Level, thing));
         }
       }
 
