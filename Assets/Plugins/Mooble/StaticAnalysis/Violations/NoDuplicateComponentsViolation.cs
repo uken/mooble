@@ -18,10 +18,11 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string FormatCLI() {
       return string.Format(
-        "{2}: There are multiple ({0}) '{1}' Components.",
+        "{3} {2}: There are multiple ({0}) '{1}' Components.",
         this.count,
         this.componentName,
-        Utility.FormatObjectPath(this.gameObject));
+        Utility.FormatObjectPath(this.gameObject),
+        this.Level.ToString().ToUpper());
     }
 
     public string FormatEditor() {

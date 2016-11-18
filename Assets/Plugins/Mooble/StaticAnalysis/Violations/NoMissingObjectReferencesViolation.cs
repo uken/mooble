@@ -16,10 +16,11 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string FormatCLI() {
       return string.Format(
-        "{0}: Field {2} from Component {1} is undefined.",
+        "{3} {0}: Field {2} from Component {1} is undefined.",
         Utility.FormatObjectPath(this.component.gameObject),
         this.component.GetType(),
-        this.fieldName);
+        this.fieldName,
+        this.Level.ToString().ToUpper());
     }
 
     public string FormatEditor() {

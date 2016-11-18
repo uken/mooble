@@ -14,8 +14,9 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string FormatCLI() {
       return string.Format(
-        "{0}: GameObject has an undefined Component (missing script reference).",
-        Utility.FormatObjectPath(this.gameObject));
+        "{1} {0}: GameObject has an undefined Component (missing script reference).",
+        Utility.FormatObjectPath(this.gameObject),
+        this.Level.ToString().ToUpper());
     }
 
     public string FormatEditor() {

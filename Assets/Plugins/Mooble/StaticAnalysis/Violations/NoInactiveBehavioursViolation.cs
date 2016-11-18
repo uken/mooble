@@ -14,9 +14,10 @@ namespace Mooble.StaticAnalysis.Violation {
 
     public string FormatCLI() {
       return string.Format(
-        "{0}: Behaviour {1} is inactive.",
+        "{2} {0}: Behaviour {1} is inactive.",
         Utility.FormatObjectPath(this.component),
-        this.component.GetType());
+        this.component.GetType(),
+        this.Level.ToString().ToUpper());
     }
 
     public string FormatEditor() {
