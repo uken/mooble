@@ -34,7 +34,7 @@ namespace Mooble.StaticAnalysis {
       Log.Debug(stringBuilder.ToString());
 
       if (foundError) {
-        throw new System.Exception("Error violation found!");
+        throw new System.Exception("Error level violation found!");
       }
     }
 
@@ -65,7 +65,7 @@ namespace Mooble.StaticAnalysis {
       Log.Debug(stringBuilder.ToString());
 
       if (foundError) {
-        throw new System.Exception("Error violation found!");
+        throw new System.Exception("Error level violation found!");
       }
     }
 
