@@ -242,7 +242,7 @@ namespace Mooble.EditorExtensions {
       this.logListLineHeight *= 1.1f;
 
       var scrollRect = new Rect(this.drawPosition, new Vector2(position.width, position.height));
-      var contentRect = new Rect(0, 0, Mathf.Max(this.logListMaxWidth, scrollRect.width), this.rulesAndTheirViolations.Count * this.logListLineHeight);
+      var contentRect = new Rect(0, 0, Mathf.Max(this.logListMaxWidth, scrollRect.width), filteredList.Count * this.logListLineHeight);
       this.logListScrollPosition = GUI.BeginScrollView(scrollRect, this.logListScrollPosition, contentRect);
 
       for (var i = 0; i < filteredList.Count; i++) {
