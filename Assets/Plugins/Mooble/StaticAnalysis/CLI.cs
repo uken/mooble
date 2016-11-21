@@ -96,10 +96,6 @@ namespace Mooble.StaticAnalysis {
         }
       }
 
-      if (scenes.Count == 0) {
-        throw new System.Exception("No scenes provided; skipping static analysis.");
-      }
-
       return scenes;
     }
 
