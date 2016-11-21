@@ -10,20 +10,26 @@ using UnityEngine.SceneManagement;
 namespace Mooble.StaticAnalysis {
   public static class CLI {
     /**
-     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunPrefabAnalysis
+     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunPrefabAnalysis Assets/Prefabs/Bob.prefab Assets/Prefabs/Beans.prefab
      */
     public static void RunPrefabAnalysis() {
       var config = Mooble.Config.Config.LoadFromFile();
+      var args = System.Environment.GetCommandLineArgs();
+      var prefabPaths = new List<string>();
+
+      for (int i = 0; i < args.Length; i++) {
+        if (args[i].EndsWith(".prefab")) {
+          prefabPaths.Add(args[i]);
+        }
+      }
+
       var sa = new StaticAnalysisBuilder(config).Get();
 
-      var prefabDirectories = config.PrefabLocations;
-      var assets = AssetDatabase.FindAssets("t:prefab", prefabDirectories);
       bool foundError = false;
       var stringBuilder = new StringBuilder();
 
-      for (var i = 0; i < assets.Length; i++) {
-        var asset = assets[i];
-        var path = AssetDatabase.GUIDToAssetPath(asset);
+      for (var i = 0; i < prefabPaths.Count; i++) {
+        var path = prefabPaths[i];
         var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         stringBuilder.Append("\nAnalyzing prefab: " + path);
 
