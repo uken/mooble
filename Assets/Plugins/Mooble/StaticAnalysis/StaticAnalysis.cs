@@ -71,6 +71,10 @@ namespace Mooble.StaticAnalysis {
     public Dictionary<Rule, List<IViolation>> Analyze(GameObject root) {
       var violations = new Dictionary<Rule, List<IViolation>>();
 
+      if (root == null) {
+        return violations;
+      }
+
       for (var j = 0; j < this.gameObjectRules.Count; j++) {
         var rule = this.gameObjectRules[j];
         violations[rule] = rule.Handle(root);

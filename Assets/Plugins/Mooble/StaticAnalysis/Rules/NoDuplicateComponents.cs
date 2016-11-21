@@ -15,6 +15,11 @@ namespace Mooble.StaticAnalysis.Rules {
 
     public override List<IViolation> Handle(GameObject thing) {
       var violations = new List<IViolation>();
+
+      if (thing == null) {
+        return violations;
+      }
+
       Component[] allComponents = thing.GetComponents<Component>();
 
       var s = new Dictionary<string, int>();
