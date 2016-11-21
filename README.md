@@ -97,4 +97,10 @@ specific rule to check whether it accepts exclusions.
 
 ### Build Integration
 
-This feature is currently in progress.
+You can integrate Mooble with your Jenkins build by using the command line tools provided (see [CLI.cs](https://github.com/uken/mooble/blob/master/Assets/Plugins/Mooble/StaticAnalysis/CLI.cs)). You can run the command line static analysis tools by using Unity's batch mode. Make sure to close any open instances of Unity before you run the following:
+
+```bash
+/Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath ${WORKSPACE} -executeMethod Mooble.StaticAnalysis.CLI.RunPrefabAnalysis ${MOOBLE_PREFABS}
+```
+
+`${WORKSPACE}` is the location of the project that has integrated the Mooble plugin, and `${MOOBLE_PREFABS}` in this case is a space-delimited list of prefabs you want to run the prefab analysis on, e.g `Assets/Prefabs/A.prefab Assets/Prefabs/B.prefab Assets/Prefabs/MorePrefabs/C.prefab`.
