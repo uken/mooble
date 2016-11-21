@@ -38,6 +38,10 @@ namespace Mooble.StaticAnalysis {
         foundError = foundError || foundErrorThisTime;
       }
 
+      if (prefabPaths.Count == 0) {
+        stringBuilder.Append("No prefabs were analyzed.");
+      }
+
       Log.Debug(stringBuilder.ToString());
 
       if (foundError) {
@@ -67,6 +71,10 @@ namespace Mooble.StaticAnalysis {
           var foundErrorThisTime = AppendViolations(stringBuilder, violations);
           foundError = foundError || foundErrorThisTime;
         }
+      }
+
+      if (scenes.Count == 0) {
+        stringBuilder.Append("No scenes were analyzed.");
       }
 
       Log.Debug(stringBuilder.ToString());
