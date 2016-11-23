@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-using UnityEngine;
-
 namespace Mooble.StaticAnalysis {
   public class StaticAnalysisBuilder {
     private Mooble.Config.Config config;
@@ -24,7 +22,7 @@ namespace Mooble.StaticAnalysis {
         if (string.IsNullOrEmpty(ruleConfig.Assembly)) {
           var ns = "Mooble.StaticAnalysis.Rules.";
 
-          if (!klassName.StartsWith(ns)) {
+          if (!klassName.StartsWith(ns, StringComparison.CurrentCulture)) {
             klassName = ns + klassName;
           }
         } else {
@@ -44,9 +42,10 @@ namespace Mooble.StaticAnalysis {
         }
 
         var level = (ViolationLevel)Enum.Parse(typeof(ViolationLevel), ruleConfig.ViolationLevel);
+        var scope = (ViolationScope)Enum.Parse(typeof(ViolationScope), ruleConfig.ViolationScope);
         List<Type> excludedTypes = this.GetExcludedTypes(ruleConfig.Exclusions);
 
-        var rule = this.ConstructRule(ruleClass, level, excludedTypes);
+        var rule = this.ConstructRule(ruleClass, level, scope, excludedTypes);
         var ruleObjectType = ruleClass.BaseType.GetGenericArguments()[0];
 
         sa.RegisterRule(ruleObjectType, rule);
@@ -55,21 +54,28 @@ namespace Mooble.StaticAnalysis {
       return sa;
     }
 
-    private Rule ConstructRule(Type ruleClass, ViolationLevel level, List<Type> excludedTypes) {
+    private Rule ConstructRule(Type ruleClass, ViolationLevel level, ViolationScope scope, List<Type> excludedTypes) {
       if (excludedTypes == null || excludedTypes.Count == 0) {
-        ConstructorInfo ctor = ruleClass.GetConstructor(new[] { typeof(ViolationLevel) });
-        return (Rule)ctor.Invoke(new object[] { level });
+        ConstructorInfo ctor = ruleClass.GetConstructor(new[] {
+          typeof(ViolationLevel),
+          typeof(ViolationScope)
+        });
+        return (Rule)ctor.Invoke(new object[] { level, scope });
       } else {
-        ConstructorInfo ctor = ruleClass.GetConstructor(new[] { typeof(ViolationLevel), typeof(List<Type>) });
+        ConstructorInfo ctor = ruleClass.GetConstructor(new[] {
+          typeof(ViolationLevel),
+          typeof(ViolationScope),
+          typeof(List<Type>)
+        });
 
         if (ctor == null) {
           Log.Debug("Could not find constructor for " + ruleClass +
               " that takes list of excluded types. Using default constructor.");
-          ctor = ruleClass.GetConstructor(new[] { typeof(ViolationLevel) });
-          return (Rule)ctor.Invoke(new object[] { level });
+          ctor = ruleClass.GetConstructor(new[] { typeof(ViolationLevel), typeof(ViolationScope) });
+          return (Rule)ctor.Invoke(new object[] { level, scope });
         }
 
-        return (Rule)ctor.Invoke(new object[] { level, excludedTypes });
+        return (Rule)ctor.Invoke(new object[] { level, scope, excludedTypes });
       }
     }
 

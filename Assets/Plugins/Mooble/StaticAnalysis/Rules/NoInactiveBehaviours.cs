@@ -8,7 +8,10 @@ namespace Mooble.StaticAnalysis.Rules {
   public class NoInactiveBehaviours : Rule<Behaviour> {
     private List<Type> excludedTypes;
 
-    public NoInactiveBehaviours(ViolationLevel level = ViolationLevel.Warning, List<Type> excludedTypes = null) : base(level) {
+    public NoInactiveBehaviours(
+      ViolationLevel level = ViolationLevel.Warning,
+      ViolationScope scope = ViolationScope.Both,
+      List<Type> excludedTypes = null) : base(level, scope) {
       this.excludedTypes = excludedTypes ?? new List<Type>();
     }
 
