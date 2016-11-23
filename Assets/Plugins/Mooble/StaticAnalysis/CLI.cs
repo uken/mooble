@@ -33,7 +33,7 @@ namespace Mooble.StaticAnalysis {
         var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         stringBuilder.Append("\nAnalyzing prefab: " + path);
 
-        var violations = sa.Analyze(obj);
+        var violations = sa.Analyze(ViolationScope.Prefab, obj);
         var foundErrorThisTime = AppendViolations(stringBuilder, violations);
         foundError = foundError || foundErrorThisTime;
       }
@@ -66,7 +66,7 @@ namespace Mooble.StaticAnalysis {
 
         foreach (var root in scene.GetRootGameObjects()) {
           stringBuilder.Append("\n  Analyzing root object in scene: " + root.name);
-          Dictionary<Rule, List<IViolation>> violations = sa.Analyze(root);
+          Dictionary<Rule, List<IViolation>> violations = sa.Analyze(ViolationScope.Scene, root);
 
           var foundErrorThisTime = AppendViolations(stringBuilder, violations);
           foundError = foundError || foundErrorThisTime;

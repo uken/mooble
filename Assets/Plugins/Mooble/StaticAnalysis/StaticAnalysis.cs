@@ -68,7 +68,7 @@ namespace Mooble.StaticAnalysis {
       this.gameObjectRules.Add(rule);
     }
 
-    public Dictionary<Rule, List<IViolation>> Analyze(GameObject root) {
+    public Dictionary<Rule, List<IViolation>> Analyze(ViolationScope scope, GameObject root) {
       var violations = new Dictionary<Rule, List<IViolation>>();
 
       if (root == null) {
@@ -77,6 +77,10 @@ namespace Mooble.StaticAnalysis {
 
       for (var j = 0; j < this.gameObjectRules.Count; j++) {
         var rule = this.gameObjectRules[j];
+        if (rule.Scope != ViolationScope.Both && rule.Scope != scope) {
+          continue;
+        }
+
         violations[rule] = rule.Handle(root);
       }
 
@@ -85,6 +89,10 @@ namespace Mooble.StaticAnalysis {
 
         for (var j = 0; j < rules.Count; j++) {
           var rule = rules[j];
+          if (rule.Scope != ViolationScope.Both && rule.Scope != scope) {
+            continue;
+          }
+
           var components = root.GetComponents(componentRuleSet.Key);
           violations[rule] = new List<IViolation>();
 
@@ -96,7 +104,7 @@ namespace Mooble.StaticAnalysis {
       }
 
       foreach (Transform child in root.transform) {
-        var moreViolations = this.Analyze(child.gameObject);
+        var moreViolations = this.Analyze(scope, child.gameObject);
 
         violations = MergeRuleViolationDictionary(violations, moreViolations);
       }

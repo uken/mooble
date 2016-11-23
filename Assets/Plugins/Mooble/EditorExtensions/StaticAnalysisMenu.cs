@@ -24,7 +24,7 @@ namespace Mooble.EditorExtension {
         var path = AssetDatabase.GUIDToAssetPath(asset);
         var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
 
-        violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(obj));
+        violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(ViolationScope.Prefab, obj));
       }
 
       EditorExtensions.ConsoleWindow.Instance.SetViolations(violations);
@@ -44,7 +44,7 @@ namespace Mooble.EditorExtension {
         GameObject[] rootGameObjects = scene.GetRootGameObjects();
         for (var j = 0; j < rootGameObjects.Length; j++) {
           var obj = rootGameObjects[j];
-          violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(obj));
+          violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(ViolationScope.Scene, obj));
         }
       }
 
