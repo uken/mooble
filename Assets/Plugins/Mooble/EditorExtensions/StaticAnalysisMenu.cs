@@ -15,7 +15,6 @@ namespace Mooble.EditorExtension {
       var config = Config.Config.LoadFromFile();
       var sa = LoadStaticAnalysisRules(config);
 
-      // TODO: Configure prefab location
       var prefabDirectories = config.PrefabLocations;
       var assets = AssetDatabase.FindAssets("t:prefab", prefabDirectories);
       var violations = new Dictionary<Rule, List<IViolation>>();

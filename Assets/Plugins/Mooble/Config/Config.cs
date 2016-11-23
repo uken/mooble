@@ -17,6 +17,7 @@ namespace Mooble.Config {
       public string Assembly;
       public string Name;
       public string ViolationLevel;
+      public string ViolationScope;
       public string[] Exclusions;
     }
   }

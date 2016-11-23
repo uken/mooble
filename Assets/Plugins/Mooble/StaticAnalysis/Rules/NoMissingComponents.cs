@@ -6,7 +6,9 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoMissingComponents : Rule<GameObject> {
-    public NoMissingComponents(ViolationLevel level = ViolationLevel.Error) : base(level) {
+    public NoMissingComponents(
+      ViolationLevel level = ViolationLevel.Error,
+      ViolationScope scope = ViolationScope.Both) : base(level, scope) {
     }
 
     public override List<IViolation> Handle(object thing) {

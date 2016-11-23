@@ -8,7 +8,9 @@ using UnityEngine;
 
 namespace Mooble.StaticAnalysis.Rules {
   public class NoMissingObjectReferences : Rule<MonoBehaviour> {
-    public NoMissingObjectReferences(ViolationLevel level = ViolationLevel.Warning) : base(level) {
+    public NoMissingObjectReferences(
+      ViolationLevel level = ViolationLevel.Warning,
+      ViolationScope scope = ViolationScope.Both) : base(level, scope) {
     }
 
     public override List<IViolation> Handle(object thing) {

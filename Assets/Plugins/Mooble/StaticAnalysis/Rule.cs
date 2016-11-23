@@ -5,9 +5,11 @@ using System.Diagnostics.CodeAnalysis;
 namespace Mooble.StaticAnalysis {
   public abstract class Rule {
     public readonly ViolationLevel Level;
+    public readonly ViolationScope Scope;
 
-    protected Rule(ViolationLevel level) {
+    protected Rule(ViolationLevel level, ViolationScope scope) {
       this.Level = level;
+      this.Scope = scope;
     }
 
     public string Name {
@@ -24,7 +26,7 @@ namespace Mooble.StaticAnalysis {
   "SA1402:FileMayOnlyContainASingleClass",
   Justification = "The rule class exists only because of C#'s silly generic system.")]
   public abstract class Rule<T> : Rule {
-    protected Rule(ViolationLevel level) : base(level) {
+    protected Rule(ViolationLevel level, ViolationScope scope) : base(level, scope) {
     }
 
     public abstract List<IViolation> Handle(T thing);
