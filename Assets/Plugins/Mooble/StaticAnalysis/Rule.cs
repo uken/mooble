@@ -19,6 +19,10 @@ namespace Mooble.StaticAnalysis {
     }
 
     public abstract List<IViolation> Handle(object thing);
+
+    public bool ValidForScope(ViolationScope scope) {
+      return this.Scope == ViolationScope.Both || this.Scope == scope;
+    }
   }
 
   [SuppressMessage(

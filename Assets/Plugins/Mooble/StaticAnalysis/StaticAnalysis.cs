@@ -77,7 +77,7 @@ namespace Mooble.StaticAnalysis {
 
       for (var j = 0; j < this.gameObjectRules.Count; j++) {
         var rule = this.gameObjectRules[j];
-        if (rule.Scope != ViolationScope.Both && rule.Scope != scope) {
+        if (!rule.ValidForScope(scope)) {
           continue;
         }
 
@@ -89,7 +89,7 @@ namespace Mooble.StaticAnalysis {
 
         for (var j = 0; j < rules.Count; j++) {
           var rule = rules[j];
-          if (rule.Scope != ViolationScope.Both && rule.Scope != scope) {
+          if (!rule.ValidForScope(scope)) {
             continue;
           }
 
