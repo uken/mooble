@@ -93,7 +93,7 @@ namespace Mooble.StaticAnalysis {
         Scene scene;
 
         try {
-          scene = EditorSceneManager.OpenScene(arg);
+          scene = EditorSceneManager.OpenScene(arg, OpenSceneMode.Additive);
         } catch (System.ArgumentException) {
           continue;
         }
