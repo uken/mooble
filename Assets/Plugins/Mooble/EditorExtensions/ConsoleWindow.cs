@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 
@@ -9,9 +9,13 @@ using UnityEngine;
 namespace Mooble.EditorExtensions {
   public class ConsoleWindow : EditorWindow {
     private const string ALL = "All";
+    private const float SPACE_INCREMENT = 6.0f;
+
+    private readonly Color selectedColor = Color.grey;
+    private readonly Color deselectedColor = Color.white;
+
     private static ConsoleWindow instance;
 
-    private Vector2 drawPosition;
     private Texture2D errorIcon;
     private Texture2D warningIcon;
 
@@ -20,12 +24,11 @@ namespace Mooble.EditorExtensions {
     private GUIStyle logEntryOdd;
     private GUIStyle logEntryEven;
 
-    private Color lineColour;
-
     private bool showErrors = true;
     private bool showWarnings = true;
 
     private Dictionary<Rule, List<IViolation>> rulesAndTheirViolations;
+    private List<ConsoleViolation> filteredList;
     private List<string> ruleNames;
 
     private float logListMaxWidth;
@@ -33,12 +36,11 @@ namespace Mooble.EditorExtensions {
     private Vector2 logListScrollPosition;
     private int selectedLog = -1;
     private int popupIndex;
-    private string longestRuleName;
 
     public static ConsoleWindow Instance {
       get {
         if (instance == null) {
-          Init();
+          Initialize();
         }
 
         return instance;
@@ -47,7 +49,7 @@ namespace Mooble.EditorExtensions {
 
     [MenuItem("Mooble/Show Console")]
     public static void ShowWindow() {
-      Init();
+      Initialize();
     }
 
     public void SetViolations(Dictionary<Rule, List<IViolation>> violations) {
@@ -56,7 +58,7 @@ namespace Mooble.EditorExtensions {
       this.Repaint();
     }
 
-    private static void Init() {
+    private static void Initialize() {
       instance = EditorWindow.GetWindow(typeof(ConsoleWindow), false, "Mooble") as ConsoleWindow;
       instance.Show();
       EditorApplication.hierarchyWindowChanged += instance.Clear;
@@ -73,35 +75,26 @@ namespace Mooble.EditorExtensions {
     }
 
     private void OnGUI() {
-      GUIStyle unityLogLineEven = null;
-      GUIStyle unityLogLineOdd = null;
-      GUIStyle unitySmallLogLine = null;
+      GUIStyle entryBackEven = GUI.skin.GetStyle("CN EntryBackEven");
+      GUIStyle entryBackOdd = GUI.skin.GetStyle("CN EntryBackOdd");
 
-      foreach (var style in GUI.skin.customStyles) {
-        switch (style.name) {
-          case "CN EntryBackEven": unityLogLineEven = style; break;
-          case "CN EntryBackOdd": unityLogLineOdd = style; break;
-          case "CN StatusInfo": unitySmallLogLine = style; break;
-        }
-      }
-
-      this.logEntryEven = new GUIStyle(unitySmallLogLine);
-      this.logEntryEven.normal = unityLogLineEven.normal;
+      this.logEntryEven = new GUIStyle();
+      this.logEntryEven.normal = entryBackEven.normal;
       this.logEntryEven.margin = new RectOffset(0, 0, 0, 0);
       this.logEntryEven.border = new RectOffset(0, 0, 0, 0);
       this.logEntryEven.fixedHeight = 0;
 
       this.logEntryOdd = new GUIStyle(this.logEntryEven);
-      this.logEntryOdd.normal = unityLogLineOdd.normal;
+      this.logEntryOdd.normal = entryBackOdd.normal;
 
       this.logListLineHeight = 0;
       this.logListMaxWidth = 0;
 
-      this.drawPosition = Vector2.zero;
-
-      List<ConsoleViolation> toDisplay = this.PopulateErrorsAndWarnings();
+      filteredList = this.PopulateErrorsAndWarnings();
+      this.SetupRuleDictAndNameList();
       this.DrawToolbar();
-      this.DrawScrollRect(this.drawPosition.y, toDisplay);
+      this.DrawScrollRect();
+      this.HandleInput();
     }
 
     private void SetupRuleDictAndNameList() {
@@ -113,12 +106,39 @@ namespace Mooble.EditorExtensions {
         this.ruleNames = new List<string> { ALL };
       }
 
-      this.longestRuleName = ALL;
-
-      foreach (var kvp in this.rulesAndTheirViolations) {
+      foreach (KeyValuePair<Rule, List<IViolation>> kvp in this.rulesAndTheirViolations) {
         if (kvp.Value.Count > 0) {
           this.ruleNames.Add(kvp.Key.Name);
-          this.longestRuleName = this.longestRuleName.Length > kvp.Key.Name.Length ? this.longestRuleName : kvp.Key.Name;
+        }
+      }
+    }
+
+    private void HandleInput() {
+      if (Event.current != null && Event.current.isKey && Event.current.type.ToString() == "KeyUp") {
+        bool shouldRepaint = false;
+
+        switch (Event.current.keyCode) {
+          case KeyCode.UpArrow:
+            if (this.selectedLog == 0) {
+              return;
+            }
+
+            this.selectedLog--;
+            shouldRepaint = true;
+            break;
+          case KeyCode.DownArrow:
+            if (this.selectedLog == this.filteredList.Count - 1) {
+              return;
+            }
+
+            this.selectedLog++;
+            shouldRepaint = true;
+            break;
+        }
+
+        if (shouldRepaint) {
+          this.Repaint();
+          this.UpdateSelection();
         }
       }
     }
@@ -126,145 +146,144 @@ namespace Mooble.EditorExtensions {
     private List<ConsoleViolation> PopulateErrorsAndWarnings() {
       this.SetupRuleDictAndNameList();
 
-      var toDisplay = new List<ConsoleViolation>();
+      List<ConsoleViolation> violations = new List<ConsoleViolation>();
 
-      if (this.showErrors) {
-        foreach (var kvp in this.rulesAndTheirViolations) {
-          if (kvp.Key.Level == ViolationLevel.Error) {
-            if (kvp.Value.Count == 0) {
-              continue;
-            }
+      List<ConsoleViolation> errors = this.PopulateErrors();
+      List<ConsoleViolation> warnings = this.PopulateWarnings();
 
-            foreach (var v in kvp.Value) {
-              if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
-                toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
-              }
+      if (errors != null) {
+        violations.AddRange(errors);
+      }
+
+      if (warnings != null) {
+        violations.AddRange(warnings);
+      }
+
+      return violations;
+    }
+
+    private List<ConsoleViolation> PopulateErrors() {
+      if (!this.showErrors) {
+        return null;
+      }
+
+      List<ConsoleViolation> errors = new List<ConsoleViolation>();
+
+      foreach (KeyValuePair<Rule, List<IViolation>> kvp in this.rulesAndTheirViolations) {
+        if (kvp.Key.Level == ViolationLevel.Error) {
+          if (kvp.Value.Count == 0) {
+            continue;
+          }
+
+          foreach (IViolation v in kvp.Value) {
+            if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
+              errors.Add(new ConsoleViolation(kvp.Key.Level, v));
             }
           }
         }
-
-        this.console.ErrorCount = toDisplay.Count;
       }
 
-      if (this.showWarnings) {
-        foreach (var kvp in this.rulesAndTheirViolations) {
-          if (kvp.Key.Level == ViolationLevel.Warning) {
-            if (kvp.Value.Count == 0) {
-              continue;
-            }
+      this.console.ErrorCount = errors.Count;
 
-            foreach (var v in kvp.Value) {
-              if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
-                toDisplay.Add(new ConsoleViolation(kvp.Key.Level, v));
-              }
+      return errors;
+    }
+
+    private List<ConsoleViolation> PopulateWarnings() {
+      if (!this.showWarnings) {
+        return null;
+      }
+
+      List<ConsoleViolation> warnings = new List<ConsoleViolation>();
+
+      foreach (KeyValuePair<Rule, List<IViolation>> kvp in this.rulesAndTheirViolations) {
+        if (kvp.Key.Level == ViolationLevel.Warning) {
+          if (kvp.Value.Count == 0) {
+            continue;
+          }
+
+          foreach (IViolation v in kvp.Value) {
+            if (this.ruleNames[this.popupIndex] == kvp.Key.Name || this.ruleNames[this.popupIndex] == ALL) {
+              warnings.Add(new ConsoleViolation(kvp.Key.Level, v));
             }
           }
         }
-
-        this.console.WarningCount = toDisplay.Count - this.console.ErrorCount;
       }
 
-      return toDisplay;
+      this.console.WarningCount = warnings.Count;
+
+      return warnings;
     }
 
     private void Clear() {
       this.console.ErrorCount = 0;
       this.console.WarningCount = 0;
       this.popupIndex = 0;
+      this.filteredList.Clear();
       this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
       this.ruleNames = new List<string> { ALL };
     }
 
     private void DrawToolbar() {
-      this.SetupRuleDictAndNameList();
+      GUILayout.BeginHorizontal(EditorStyles.toolbar);
 
-      var toolbarStyle = EditorStyles.toolbarButton;
+      this.DrawButton("Clear", this.Clear);
 
-      this.drawPosition.x = position.width * 0.01f;
+      this.InsertSpace();
 
-      Vector2 sizeOfElement;
-      if (this.DrawButton("Clear", EditorStyles.toolbarButton, out sizeOfElement)) {
-        this.Clear();
-      }
+      this.DrawButton("Analyze Scene", Mooble.EditorExtension.StaticAnalysisMenu.PrintSceneAnalysis);
 
-      this.drawPosition.x = position.width * 0.25f;
+      this.InsertSpace();
 
-      this.DrawLabel("Rule: ", EditorStyles.toolbarButton, out sizeOfElement);
-      this.drawPosition.x += sizeOfElement.x;
+      this.DrawButton("Analyze All Prefabs", Mooble.EditorExtension.StaticAnalysisMenu.PrintPrefabAnalysis);
 
-      this.popupIndex = EditorGUI.Popup(
-        new Rect(
-          this.drawPosition,
-          toolbarStyle.CalcSize(new GUIContent(this.longestRuleName))),
-        this.popupIndex,
-        this.ruleNames.ToArray(),
-        EditorStyles.toolbarPopup);
+      GUILayout.FlexibleSpace();
 
-      var errorToggleContent = new GUIContent(this.console.ErrorCount.ToString(), this.errorIcon);
-      var warningToggleContent = new GUIContent(this.console.WarningCount.ToString(), this.warningIcon);
+      GUILayout.Label("Rule: ", EditorStyles.toolbarButton);
+      this.popupIndex = EditorGUILayout.Popup(this.popupIndex, this.ruleNames.ToArray(), EditorStyles.toolbarPopup);
 
-      float totalErrorButtonWidth =
-        toolbarStyle.CalcSize(errorToggleContent).x +
-        toolbarStyle.CalcSize(warningToggleContent).x;
+      this.InsertSpace();
+      this.InsertSpace();
 
-      float errorIconX = position.width - totalErrorButtonWidth;
+      this.showWarnings = this.DrawToggle(this.showWarnings, new GUIContent(this.console.WarningCount.ToString(), this.warningIcon));
+      this.showErrors = this.DrawToggle(this.showErrors, new GUIContent(this.console.ErrorCount.ToString(), this.errorIcon));
 
-      if (errorIconX > this.drawPosition.x) {
-        this.drawPosition.x = errorIconX;
-      }
-
-      this.showErrors = this.DrawToggleButton(this.showErrors, errorToggleContent, toolbarStyle, out sizeOfElement);
-      this.drawPosition.x += sizeOfElement.x;
-
-      this.showWarnings = this.DrawToggleButton(this.showWarnings, warningToggleContent, toolbarStyle, out sizeOfElement);
-      this.drawPosition.x += sizeOfElement.x;
-
-      this.drawPosition.y += sizeOfElement.y;
-
-      this.drawPosition.x = 0;
+      GUILayout.EndHorizontal();
     }
 
-    private void DrawScrollRect(float height, IList<ConsoleViolation> filteredList) {
-      if (filteredList.Count == 0) {
+    private void DrawScrollRect() {
+      if (this.filteredList.Count == 0) {
         return;
       }
 
-      var oldColor = GUI.backgroundColor;
-      var logLineStyle = this.logEntryEven;
-      var logLineSize = logLineStyle.CalcSize(new GUIContent("A"));
+      Color oldColor = GUI.backgroundColor;
+      GUIStyle logLineStyle = this.logEntryEven;
 
-      for (var k = 0; k < filteredList.Count; k++) {
-        var size = logLineStyle.CalcSize(this.GUIContentForIViolation(filteredList[k]));
+      for (int k = 0; k < this.filteredList.Count; k++) {
+        Vector2 size = logLineStyle.CalcSize(this.GUIContentForIViolation(this.filteredList[k]));
         this.logListMaxWidth = Mathf.Max(this.logListMaxWidth, size.x);
         this.logListLineHeight = Mathf.Max(this.logListLineHeight, size.y);
       }
 
       this.logListLineHeight *= 1.1f;
 
-      var scrollRect = new Rect(this.drawPosition, new Vector2(position.width, position.height));
-      var contentRect = new Rect(0, 0, Mathf.Max(this.logListMaxWidth, scrollRect.width), filteredList.Count * this.logListLineHeight);
+      Rect scrollRect = new Rect(Vector2.zero, new Vector2(this.position.width, this.position.height));
+      Rect contentRect = new Rect(Vector2.zero, new Vector2(Mathf.Max(this.logListMaxWidth, scrollRect.width), this.filteredList.Count * this.logListLineHeight));
       this.logListScrollPosition = GUI.BeginScrollView(scrollRect, this.logListScrollPosition, contentRect);
 
-      for (var i = 0; i < filteredList.Count; i++) {
+      for (int i = 0; i < this.filteredList.Count; i++) {
         logLineStyle = i % 2 == 0 ? this.logEntryEven : this.logEntryOdd;
-        GUI.backgroundColor = i == this.selectedLog ? new Color(0.5f, 0.5f, 1) : Color.white;
+        GUI.backgroundColor = i == this.selectedLog ? this.selectedColor : this.deselectedColor;
 
-        var rect = new Rect(0, this.logListLineHeight * i, contentRect.width, this.logListLineHeight);
-        if (GUI.Button(rect, this.GUIContentForIViolation(filteredList[i]), logLineStyle)) {
+        if (GUILayout.Button(this.GUIContentForIViolation(this.filteredList[i]), logLineStyle)) {
           if (i != this.selectedLog) {
             this.selectedLog = i;
           }
 
-          var go = filteredList[i].Violation.GetObject();
-          if (go != null) {
-            Selection.activeObject = go;
-          }
+          this.UpdateSelection();
         }
       }
 
       GUI.EndScrollView();
-      this.drawPosition.y += height;
-      this.drawPosition.x = 0;
       GUI.backgroundColor = oldColor;
     }
 
@@ -272,21 +291,29 @@ namespace Mooble.EditorExtensions {
       return new GUIContent(violation.Violation.FormatEditor(), violation.Level == ViolationLevel.Warning ? this.warningIcon : this.errorIcon);
     }
 
-    private bool DrawButton(string text, GUIStyle style, out Vector2 size) {
-      var content = new GUIContent(text);
-      size = style.CalcSize(content);
-      return GUI.Button(new Rect(this.drawPosition, size), text, style);
+    private void UpdateSelection() {
+      UnityEngine.Object obj = this.filteredList[this.selectedLog].Violation.GetObject();
+      if (obj != null) {
+        Selection.activeObject = obj;
+      }
     }
 
-    private bool DrawToggleButton(bool selected, GUIContent content, GUIStyle style, out Vector2 size) {
-      size = style.CalcSize(content);
-      return GUI.Toggle(new Rect(this.drawPosition, size), selected, content, style);
+    private void DrawButton(string text, Action action) {
+      if (GUILayout.Button(text, EditorStyles.toolbarButton)) {
+        if (action == null) {
+          return;
+        }
+
+        action();
+      }
     }
 
-    private void DrawLabel(string text, GUIStyle style, out Vector2 size) {
-      var content = new GUIContent(text);
-      size = style.CalcSize(content);
-      GUI.Label(new Rect(this.drawPosition, size), text, style);
+    private bool DrawToggle(bool selected, GUIContent content) {
+      return GUILayout.Toggle(selected, content, EditorStyles.toolbarButton);
+    }
+
+    private void InsertSpace() {
+      GUILayout.Space(SPACE_INCREMENT);
     }
 
     private struct ConsoleViolation {
