@@ -55,13 +55,13 @@ namespace Mooble.EditorExtensions {
     public void SetViolations(Dictionary<Rule, List<IViolation>> violations) {
       this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
       this.rulesAndTheirViolations = StaticAnalysis.StaticAnalysis.MergeRuleViolationDictionary(this.rulesAndTheirViolations, violations);
+
       this.Repaint();
     }
 
     private static void Initialize() {
       instance = EditorWindow.GetWindow(typeof(ConsoleWindow), false, "Mooble") as ConsoleWindow;
       instance.Show();
-      EditorApplication.hierarchyWindowChanged += instance.Clear;
     }
 
     private void OnEnable() {
@@ -90,7 +90,7 @@ namespace Mooble.EditorExtensions {
       this.logListLineHeight = 0;
       this.logListMaxWidth = 0;
 
-      filteredList = this.PopulateErrorsAndWarnings();
+      this.filteredList = this.PopulateErrorsAndWarnings();
       this.SetupRuleDictAndNameList();
       this.DrawToolbar();
       this.DrawScrollRect();
@@ -217,6 +217,8 @@ namespace Mooble.EditorExtensions {
     private void Clear() {
       this.console.ErrorCount = 0;
       this.console.WarningCount = 0;
+      this.showErrors = true;
+      this.showWarnings = true;
       this.popupIndex = 0;
       this.filteredList.Clear();
       this.rulesAndTheirViolations = new Dictionary<Rule, List<IViolation>>();
@@ -266,15 +268,16 @@ namespace Mooble.EditorExtensions {
 
       this.logListLineHeight *= 1.1f;
 
-      Rect scrollRect = new Rect(Vector2.zero, new Vector2(this.position.width, this.position.height));
-      Rect contentRect = new Rect(Vector2.zero, new Vector2(Mathf.Max(this.logListMaxWidth, scrollRect.width), this.filteredList.Count * this.logListLineHeight));
+      Rect scrollRect = new Rect(0, EditorStyles.toolbarButton.fixedHeight, this.position.width, this.position.height);
+      Rect contentRect = new Rect(0, EditorStyles.toolbarButton.fixedHeight, Mathf.Max(this.logListMaxWidth, scrollRect.width), this.filteredList.Count * this.logListLineHeight);
       this.logListScrollPosition = GUI.BeginScrollView(scrollRect, this.logListScrollPosition, contentRect);
 
       for (int i = 0; i < this.filteredList.Count; i++) {
         logLineStyle = i % 2 == 0 ? this.logEntryEven : this.logEntryOdd;
         GUI.backgroundColor = i == this.selectedLog ? this.selectedColor : this.deselectedColor;
+        var rect = new Rect(0, this.logListLineHeight * i, contentRect.width, this.logListLineHeight);
 
-        if (GUILayout.Button(this.GUIContentForIViolation(this.filteredList[i]), logLineStyle)) {
+        if (GUILayout.Button(this.GUIContentForIViolation(this.filteredList[i]), logLineStyle, GUILayout.Width(rect.width), GUILayout.Height(rect.height))) {
           if (i != this.selectedLog) {
             this.selectedLog = i;
           }
@@ -292,6 +295,10 @@ namespace Mooble.EditorExtensions {
     }
 
     private void UpdateSelection() {
+      if (this.filteredList == null || this.filteredList.Count == 0) {
+        return;
+      }
+
       UnityEngine.Object obj = this.filteredList[this.selectedLog].Violation.GetObject();
       if (obj != null) {
         Selection.activeObject = obj;
