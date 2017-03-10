@@ -1,0 +1,43 @@
+/obj
+/Temp
+/Library
+/Assets/Plugins/Editor/RelationsInspector/LayoutCaches.meta
+/Assets/Plugins/Editor/RelationsInspector/LayoutCaches
+
+.DS_Store
+.vscode
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+*.orig.meta
+*.sublime-project
+*.sublime-workspace
+
+# Unity3D generated meta files
+*.pidb.meta
+
+# Unity3D Generated File On Crash Reports
+sysinfo.txt
+
+# StyleCop generated violations
+StyleCopViolations.xml
+
+# Windows Store Build Generated Files
+UWP/*
+
+# LibreOffice Generated Files
+*.xlsx#
+
+/Builds
+
+/Assets/StreamingAssets/crashlytics-build.properties*
+/Assets/StreamingAssets.meta
+
+AdjustPostBuildAndroidLog.txt
+AdjustPostBuildiOSLog.txt
