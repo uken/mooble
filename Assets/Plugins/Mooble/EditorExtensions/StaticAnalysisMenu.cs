@@ -35,11 +35,10 @@ namespace Mooble.EditorExtension {
       var config = Config.Config.LoadFromFile();
       var sa = LoadStaticAnalysisRules(config);
 
-      var scenes = SceneManager.GetAllScenes();
       var violations = new Dictionary<Rule, List<IViolation>>();
 
-      for (var i = 0; i < scenes.Length; i++) {
-        var scene = scenes[i];
+      for (var i = 0; i < SceneManager.sceneCount; i++) {
+        var scene = SceneManager.GetSceneAt(i);
 
         GameObject[] rootGameObjects = scene.GetRootGameObjects();
         for (var j = 0; j < rootGameObjects.Length; j++) {
