@@ -1,5 +1,9 @@
 # Mooble
 
+## Acknowledgments
+
+This project was created by @kgooble and @elmoeleven during one of Uken's 2016 Hadoukathons
+
 ## Static Analysis
 
 Mooble provides tools to perform static analysis on prefabs and scene files -
@@ -110,7 +114,3 @@ You can integrate Mooble with your Jenkins build by using the command line tools
 ```
 
 `${WORKSPACE}` is the location of the project that has integrated the Mooble plugin, and `${MOOBLE_PREFABS}` in this case is a space-delimited list of prefabs you want to run the prefab analysis on, e.g `Assets/Prefabs/A.prefab Assets/Prefabs/B.prefab Assets/Prefabs/MorePrefabs/C.prefab`.
-
-## Acknowledgments
-
-This project was created by @kgooble and @elmoeleven during one of Uken's 2016 Hadoukathon
