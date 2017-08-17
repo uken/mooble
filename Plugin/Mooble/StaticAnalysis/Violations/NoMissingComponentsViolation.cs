@@ -22,7 +22,7 @@ namespace Mooble.StaticAnalysis.Violation {
     public string FormatEditor() {
       return string.Format(
         "GameObject {0} has an undefined Component (missing script reference).",
-        Utility.FormatPrimaryObject(this.gameObject.name));
+        Utility.FormatPrimaryObject(Utility.FormatObjectPath(this.gameObject)));
     }
 
     public UnityEngine.Object GetObject() {
