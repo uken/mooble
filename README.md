@@ -16,7 +16,7 @@ and allowing you to customize the static analysis by writing your own rules.
 
 All it takes to get started with Mooble is to drop the Mooble directory into 
 `Assets/Plugins` of your own project. Take a look at the sample project provided
-in this repository for an example.
+[here](https://github.com/kgooble/mooble-example-project) for an example.
 
 ### Built-in Rules
 
