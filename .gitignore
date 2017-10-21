@@ -6,6 +6,7 @@
 
 .DS_Store
 .vscode
+.vs
 *.svd
 *.userprefs
 *.csproj
