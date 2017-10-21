@@ -1,0 +1,37 @@
+{
+  "PrefabLocations": [
+    "Assets/Prefabs"
+  ],
+  "Rules": [
+    {
+      "Name": "NoDuplicateComponents",
+      "ViolationLevel": "Warning",
+      "ViolationScope": "Both",
+      "Exclusions": []
+    },
+    {
+      "Name": "NoMissingComponents",
+      "ViolationLevel": "Error",
+      "ViolationScope": "Both",
+      "Exclusions": []
+    },
+    {
+      "Name": "NoMissingObjectReferences",
+      "ViolationLevel": "Warning",
+      "ViolationScope": "Both",
+      "Exclusions": []
+    },
+    {
+      "Name": "NoInactiveBehaviours",
+      "ViolationLevel": "Warning",
+      "ViolationScope": "Both",
+      "Exclusions": [ "UnityEngine.Animator, UnityEngine", "UnityEngine.FlareLayer, UnityEngine" ]
+    },
+    {
+      "Name": "NoImageWithMissingSprite",
+      "ViolationLevel": "Error",
+      "ViolationScope": "Both",
+      "Exclusions": []
+    }
+  ]
+}
