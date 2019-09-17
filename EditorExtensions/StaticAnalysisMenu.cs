@@ -36,6 +36,7 @@ namespace Mooble.EditorExtension {
       var sa = LoadStaticAnalysisRules(config);
 
       var violations = new Dictionary<Rule, List<IViolation>>();
+      HashSet<string> ignoredSceneObjectNames = new HashSet<string>(config.IgnoredSceneRootObjectNames);
 
       for (var i = 0; i < SceneManager.sceneCount; i++) {
         var scene = SceneManager.GetSceneAt(i);
@@ -43,6 +44,10 @@ namespace Mooble.EditorExtension {
         GameObject[] rootGameObjects = scene.GetRootGameObjects();
         for (var j = 0; j < rootGameObjects.Length; j++) {
           var obj = rootGameObjects[j];
+          if (ignoredSceneObjectNames.Contains(obj.name)) {
+            continue;
+          }
+
           violations = StaticAnalysis.MergeRuleViolationDictionary(violations, sa.Analyze(ViolationScope.Scene, obj));
         }
       }
