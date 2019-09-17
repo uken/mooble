@@ -88,6 +88,10 @@ Only rules listed in the `Rules` list will be run.
 
 #### Exclusions
 
+The `IgnoredSceneRootObjectNames` property at the root level of the `moobleconfig.json`
+file allows you to specify object names at the root level of scenes that should be ignored by Mooble.
+This can be useful if you need to ignore certain prefabs that are from, say, 3rd party plugins.
+
 The `Exclusions` list is to allow users to provide various types that the
 rule in question should _not_ run on. This type name must be qualified
 with the full namespace and the assembly it belongs to. For example, if you
