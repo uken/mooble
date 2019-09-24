@@ -13,6 +13,7 @@ namespace Mooble.Config
     };
 
     public string[] PrefabLocations;
+    public string[] IgnoredSceneRootObjectNames;
     public StaticAnalysisRuleConfig[] Rules;
 
     public static Config LoadFromFile(string fileName = null)
