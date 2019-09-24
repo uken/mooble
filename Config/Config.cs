@@ -26,6 +26,7 @@ namespace Mooble.Config
       {
         if (System.IO.File.Exists(path))
         {
+          Log.Debug("Mooble: Using config file found at " + path);
           string text = System.IO.File.ReadAllText(path);
           return JsonUtility.FromJson<Config>(text);
         }
