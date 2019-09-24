@@ -63,14 +63,16 @@ namespace Mooble.StaticAnalysis {
       HashSet<string> ignoredSceneObjectNames = new HashSet<string>(config.IgnoredSceneRootObjectNames);
 
       foreach (var scene in scenes) {
-        if (ignoredSceneObjectNames.Contains(root.name)) {
-          stringBuilder.Append("\n  Ignoring root object in scene: " + root.name);
-        } else {
-          stringBuilder.Append("\n  Analyzing root object in scene: " + root.name);
-          Dictionary<Rule, List<IViolation>> violations = sa.Analyze(ViolationScope.Scene, root);
+        foreach (var root in scene.GetRootGameObjects()) {
+          if (ignoredSceneObjectNames.Contains(root.name)) {
+            stringBuilder.Append("\n  Ignoring root object in scene: " + root.name);
+          } else {
+            stringBuilder.Append("\n  Analyzing root object in scene: " + root.name);
+            Dictionary<Rule, List<IViolation>> violations = sa.Analyze(ViolationScope.Scene, root);
 
-          var foundErrorThisTime = AppendViolations(stringBuilder, violations);
-          foundError = foundError || foundErrorThisTime;
+            var foundErrorThisTime = AppendViolations(stringBuilder, violations);
+            foundError = foundError || foundErrorThisTime;
+          }
         }
       }
 
