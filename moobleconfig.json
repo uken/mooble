@@ -2,6 +2,8 @@
   "PrefabLocations": [
     "Assets/Prefabs"
   ],
+  "IgnoredSceneRootObjectNames": [
+  ],
   "Rules": [
     {
       "Name": "NoDuplicateComponents",
