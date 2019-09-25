@@ -8,8 +8,8 @@ namespace Mooble.Config
   public class Config
   {
     private static readonly string[] POTENTIAL_CONFIG_FILES = new[] {
-      "Assets/Plugins/Mooble/moobleconfig.json",
-      "moobleconfig.json"
+      "moobleconfig.json",
+      "Assets/Plugins/Mooble/moobleconfig.json"
     };
 
     public string[] PrefabLocations;
