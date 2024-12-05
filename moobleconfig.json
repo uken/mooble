@@ -2,6 +2,9 @@
   "PrefabLocations": [
     "Assets/Prefabs"
   ],
+  "SceneLocations": [
+    "Assets/Scenes"
+  ],
   "IgnoredSceneRootObjectNames": [
   ],
   "Rules": [
