@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-using Com.Uken.Extensions;
-
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,17 +15,15 @@ namespace Mooble.StaticAnalysis {
     public static void RunPrefabAnalysis() {
       var config = Mooble.Config.Config.LoadFromFile();
 
-      var prefabPaths = AssetDatabase
-        .FindAssets("t:prefab", config.PrefabLocations)
-        .Map(guid => AssetDatabase.GUIDToAssetPath(guid));
+      var prefabGuids = AssetDatabase.FindAssets("t:prefab", config.PrefabLocations);
 
       var sa = new StaticAnalysisBuilder(config).Get();
 
       bool foundError = false;
       var stringBuilder = new StringBuilder();
 
-      for (var i = 0; i < prefabPaths.Count; i++) {
-        var path = prefabPaths[i];
+      foreach (var prefabGuid in prefabGuids) {
+        var path = AssetDatabase.GUIDToAssetPath(prefabGuid);
         var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         stringBuilder.Append("\nAnalyzing prefab: " + path);
 
@@ -36,7 +32,7 @@ namespace Mooble.StaticAnalysis {
         foundError = foundError || foundErrorThisTime;
       }
 
-      if (prefabPaths.Count == 0) {
+      if (prefabGuids.Length == 0) {
         stringBuilder.Append("No prefabs were analyzed.");
       }
 
@@ -89,15 +85,13 @@ namespace Mooble.StaticAnalysis {
     private static List<Scene> LoadScenesFromConfig(Mooble.Config.Config config) {
       var scenes = new List<Scene>();
 
-      var scenePaths = AssetDatabase
-        .FindAssets("t:scene", config.SceneLocations)
-        .Map(guid => AssetDatabase.GUIDToAssetPath(guid));
+      var sceneGuids = AssetDatabase.FindAssets("t:scene", config.SceneLocations);
 
-      foreach (string scenePath in scenePaths) {
+      foreach (var sceneGuid in sceneGuids) {
         Scene scene;
 
         try {
-          scene = EditorSceneManager.OpenScene(scenePath, OpenSceneMode.Additive);
+          scene = EditorSceneManager.OpenScene(AssetDatabase.GUIDToAssetPath(sceneGuid), OpenSceneMode.Additive);
         } catch (System.ArgumentException) {
           continue;
         }
