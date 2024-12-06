@@ -10,26 +10,20 @@ using UnityEngine.SceneManagement;
 namespace Mooble.StaticAnalysis {
   public static class CLI {
     /**
-     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunPrefabAnalysis Assets/Prefabs/Bob.prefab Assets/Prefabs/Beans.prefab
+     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunPrefabAnalysis
      */
     public static void RunPrefabAnalysis() {
       var config = Mooble.Config.Config.LoadFromFile();
-      var args = System.Environment.GetCommandLineArgs();
-      var prefabPaths = new List<string>();
 
-      for (int i = 0; i < args.Length; i++) {
-        if (args[i].EndsWith(".prefab")) {
-          prefabPaths.Add(args[i]);
-        }
-      }
+      var prefabGuids = AssetDatabase.FindAssets("t:prefab", config.PrefabLocations);
 
       var sa = new StaticAnalysisBuilder(config).Get();
 
       bool foundError = false;
       var stringBuilder = new StringBuilder();
 
-      for (var i = 0; i < prefabPaths.Count; i++) {
-        var path = prefabPaths[i];
+      foreach (var prefabGuid in prefabGuids) {
+        var path = AssetDatabase.GUIDToAssetPath(prefabGuid);
         var obj = AssetDatabase.LoadAssetAtPath<GameObject>(path);
         stringBuilder.Append("\nAnalyzing prefab: " + path);
 
@@ -38,7 +32,7 @@ namespace Mooble.StaticAnalysis {
         foundError = foundError || foundErrorThisTime;
       }
 
-      if (prefabPaths.Count == 0) {
+      if (prefabGuids.Length == 0) {
         stringBuilder.Append("No prefabs were analyzed.");
       }
 
@@ -50,12 +44,13 @@ namespace Mooble.StaticAnalysis {
     }
 
     /**
-     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunSceneAnalysis Assets/Scene1.unity
+     * Sample Usage: /Applications/Unity/Unity.app/Contents/MacOS/Unity -quit -batchmode -projectPath `pwd` -executeMethod Mooble.StaticAnalysis.CLI.RunSceneAnalysis
      */
     public static void RunSceneAnalysis() {
-      var scenes = LoadScenesFromArgs();
-
       var config = Mooble.Config.Config.LoadFromFile();
+
+      var scenes = LoadScenesFromConfig(config);
+
       var sa = new StaticAnalysisBuilder(config).Get();
 
       var stringBuilder = new StringBuilder();
@@ -87,16 +82,16 @@ namespace Mooble.StaticAnalysis {
       }
     }
 
-    private static List<Scene> LoadScenesFromArgs() {
-      var commandLineArgs = System.Environment.GetCommandLineArgs();
-
+    private static List<Scene> LoadScenesFromConfig(Mooble.Config.Config config) {
       var scenes = new List<Scene>();
 
-      foreach (var arg in commandLineArgs) {
+      var sceneGuids = AssetDatabase.FindAssets("t:scene", config.SceneLocations);
+
+      foreach (var sceneGuid in sceneGuids) {
         Scene scene;
 
         try {
-          scene = EditorSceneManager.OpenScene(arg, OpenSceneMode.Additive);
+          scene = EditorSceneManager.OpenScene(AssetDatabase.GUIDToAssetPath(sceneGuid), OpenSceneMode.Additive);
         } catch (System.ArgumentException) {
           continue;
         }
